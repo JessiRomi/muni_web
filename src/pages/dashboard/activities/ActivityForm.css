@@ -1,0 +1,92 @@
+.activity-form-section {
+  margin-top: 28px;
+  padding: 28px;
+  background: #fff;
+  border: 1px solid #e5e1d8;
+  border-radius: 16px;
+}
+
+.activity-form-section h2 {
+  margin: 0 0 8px;
+}
+
+.activity-form-section > p {
+  color: #77766f;
+}
+
+.activity-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.activity-form label {
+  margin-top: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.activity-form input,
+.activity-form textarea,
+.activity-form select {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #dcd8cd;
+  border-radius: 9px;
+  background: #fff;
+  color: #292923;
+  font: inherit;
+}
+
+.activity-form input:focus,
+.activity-form textarea:focus,
+.activity-form select:focus {
+  outline: 2px solid #edb34d;
+  outline-offset: 1px;
+}
+
+.activity-form-error {
+  color: #b42318;
+}
+
+.activity-form-success {
+  color: #217346;
+}
+
+.activity-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.activity-form-actions button {
+  padding: 12px 18px;
+  border: 1px solid #ddd8ce;
+  border-radius: 24px;
+  background: #fff;
+  color: #292923;
+  cursor: pointer;
+}
+
+.activity-form-actions button[type="submit"] {
+  border-color: transparent;
+  background: linear-gradient(100deg, #ffbd31, #ff8b2a);
+  font-weight: 700;
+}
+
+.activity-form-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 600px) {
+  .activity-form-section {
+    padding: 20px;
+  }
+
+  .activity-form-actions {
+    flex-direction: column;
+  }
+}
