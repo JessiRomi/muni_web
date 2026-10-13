@@ -2,30 +2,28 @@
   margin-top: 28px;
   padding: 28px;
   background: #fff;
+  color: #292923;
   border: 1px solid #e5e1d8;
   border-radius: 16px;
 }
-
 .activity-form-section h2 {
   margin: 0 0 8px;
+  color: #292923;
 }
-
 .activity-form-section > p {
   color: #77766f;
 }
-
 .activity-form {
   display: grid;
   gap: 10px;
   margin-top: 24px;
 }
-
 .activity-form label {
   margin-top: 8px;
+  color: #45453e;
   font-weight: 600;
   font-size: 14px;
 }
-
 .activity-form input,
 .activity-form textarea,
 .activity-form select {
@@ -38,29 +36,24 @@
   color: #292923;
   font: inherit;
 }
-
 .activity-form input:focus,
 .activity-form textarea:focus,
 .activity-form select:focus {
   outline: 2px solid #edb34d;
   outline-offset: 1px;
 }
-
 .activity-form-error {
   color: #b42318;
 }
-
 .activity-form-success {
   color: #217346;
 }
-
 .activity-form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 16px;
 }
-
 .activity-form-actions button {
   padding: 12px 18px;
   border: 1px solid #ddd8ce;
@@ -69,23 +62,65 @@
   color: #292923;
   cursor: pointer;
 }
-
 .activity-form-actions button[type="submit"] {
   border-color: transparent;
   background: linear-gradient(100deg, #ffbd31, #ff8b2a);
+  color: #292923;
   font-weight: 700;
 }
-
 .activity-form-actions button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+.activity-form-actions button[type="button"] {
+  border-color: transparent;
+  background: linear-gradient(100deg, #ffbd31, #ff8b2a);
+  color: #292923;
+  font-weight: 700;
+}
+
+.app.theme-dark .activity-form-section {
+  background: #20211e;
+  color: #f4f1e8;
+  border-color: #41423c;
+}
+.app.theme-dark .activity-form-section h2,
+.app.theme-dark .activity-form label {
+  color: #f4f1e8;
+}
+.app.theme-dark .activity-form-section > p {
+  color: #c4c1b8;
+}
+.app.theme-dark .activity-form input,
+.app.theme-dark .activity-form textarea,
+.app.theme-dark .activity-form select {
+  background: #292a26;
+  color: #f4f1e8;
+  border-color: #505149;
+  color-scheme: dark;
+}
+.app.theme-dark .activity-form input::placeholder,
+.app.theme-dark .activity-form textarea::placeholder {
+  color: #b8b7ae;
+}
+.app.theme-dark .activity-form-error {
+  color: #ff8b82;
+}
+.app.theme-dark .activity-form-success {
+  color: #7ed6a0;
+}
+
+.app.theme-dark .activity-form-actions button:not([type="submit"]) {
+  background: linear-gradient(100deg, #ffbd31, #ff8b2a);
+  color: #292923;
+  border-color: transparent;
+  font-weight: 700;
 }
 
 @media (max-width: 600px) {
   .activity-form-section {
     padding: 20px;
   }
-
   .activity-form-actions {
     flex-direction: column;
   }

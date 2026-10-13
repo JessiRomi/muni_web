@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import activitiesService from "../../../services/activitiesService";
 import usersService from "../../../services/usersService";
+import { prepareActivityData, validateActivityForm } from "./activityFormUtils";
 import "./ActivityForm.css";
 
 const initialForm = {
@@ -13,13 +14,9 @@ const initialForm = {
   responsibleId: "",
 };
 
-function toISOString(value) {
-  return new Date(value).toISOString();
-}
-
 export default function ActivityForm({ onCreated, onCancel }) {
   const { user } = useAuth();
-
+  
   const [form, setForm] = useState(initialForm);
   const [instructors, setInstructors] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
@@ -29,11 +26,9 @@ export default function ActivityForm({ onCreated, onCancel }) {
 
   useEffect(() => {
     let active = true;
-
     async function loadInstructors() {
       try {
         const users = await usersService.getAll();
-
         if (active) {
           setInstructors(
             users.filter(
@@ -53,9 +48,7 @@ export default function ActivityForm({ onCreated, onCancel }) {
         if (active) setLoadingUsers(false);
       }
     }
-
     loadInstructors();
-
     return () => {
       active = false;
     };
@@ -63,7 +56,6 @@ export default function ActivityForm({ onCreated, onCancel }) {
 
   function handleChange(event) {
     const { name, value } = event.target;
-
     setForm((current) => ({
       ...current,
       [name]: value,
@@ -74,52 +66,16 @@ export default function ActivityForm({ onCreated, onCancel }) {
     event.preventDefault();
     setError("");
     setSuccess("");
-
-    if (!user?.roles?.includes("ADMINISTRADOR")) {
-      setError("No tenés permisos para crear actividades.");
+    
+    const validationError = validateActivityForm(form, user);
+    if (validationError) {
+      setError(validationError);
       return;
     }
-
-    const start = new Date(form.enrollmentStart);
-    const end = new Date(form.enrollmentEnd);
-    const capacity = Number(form.capacity);
-
-    if (
-      !form.name.trim() ||
-      !form.enrollmentStart ||
-      !form.enrollmentEnd ||
-      !form.responsibleId
-    ) {
-      setError("Completá todos los campos obligatorios.");
-      return;
-    }
-
-    if (
-      Number.isNaN(start.getTime()) ||
-      Number.isNaN(end.getTime()) ||
-      end <= start
-    ) {
-      setError("La fecha de finalización debe ser posterior al inicio.");
-      return;
-    }
-
-    if (!Number.isInteger(capacity) || capacity < 1) {
-      setError("La capacidad debe ser un número entero mayor que cero.");
-      return;
-    }
-
     setSaving(true);
-
+    
     try {
-      const created = await activitiesService.create({
-        name: form.name.trim(),
-        description: form.description.trim() || undefined,
-        capacity,
-        enrollmentStart: toISOString(form.enrollmentStart),
-        enrollmentEnd: toISOString(form.enrollmentEnd),
-        responsibleId: Number(form.responsibleId),
-      });
-
+      const created = await activitiesService.create(prepareActivityData(form));
       setForm(initialForm);
       setSuccess("La actividad se creó correctamente.");
       onCreated?.(created);
@@ -137,7 +93,6 @@ export default function ActivityForm({ onCreated, onCancel }) {
     <section className="activity-form-section">
       <h2>Nueva actividad</h2>
       <p>Completá los datos para registrar una actividad.</p>
-
       <form className="activity-form" onSubmit={handleSubmit}>
         <label htmlFor="activity-name">Nombre *</label>
         <input
@@ -149,7 +104,6 @@ export default function ActivityForm({ onCreated, onCancel }) {
           required
           disabled={saving}
         />
-
         <label htmlFor="activity-description">Descripción</label>
         <textarea
           id="activity-description"
@@ -159,7 +113,6 @@ export default function ActivityForm({ onCreated, onCancel }) {
           rows={3}
           disabled={saving}
         />
-
         <label htmlFor="activity-capacity">Capacidad *</label>
         <input
           id="activity-capacity"
@@ -172,7 +125,6 @@ export default function ActivityForm({ onCreated, onCancel }) {
           required
           disabled={saving}
         />
-
         <label htmlFor="activity-start">Inicio de inscripción *</label>
         <input
           id="activity-start"
@@ -183,7 +135,6 @@ export default function ActivityForm({ onCreated, onCancel }) {
           required
           disabled={saving}
         />
-
         <label htmlFor="activity-end">Fin de inscripción *</label>
         <input
           id="activity-end"
@@ -195,7 +146,6 @@ export default function ActivityForm({ onCreated, onCancel }) {
           required
           disabled={saving}
         />
-
         <label htmlFor="activity-responsible">Instructor responsable *</label>
         <select
           id="activity-responsible"
@@ -210,18 +160,15 @@ export default function ActivityForm({ onCreated, onCancel }) {
               ? "Cargando instructores..."
               : "Seleccioná un instructor"}
           </option>
-
           {instructors.map((instructor) => (
             <option key={instructor.id} value={instructor.id}>
               {instructor.firstName} {instructor.lastName} — {instructor.email}
             </option>
           ))}
         </select>
-
         {instructors.length === 0 && !loadingUsers && (
           <p>No se encontraron instructores activos.</p>
         )}
-
         {error && (
           <p className="activity-form-error" role="alert">
             {error}
@@ -232,14 +179,12 @@ export default function ActivityForm({ onCreated, onCancel }) {
             {success}
           </p>
         )}
-
         <div className="activity-form-actions">
           {onCancel && (
             <button type="button" onClick={onCancel} disabled={saving}>
               Cancelar
             </button>
           )}
-
           <button
             type="submit"
             disabled={saving || loadingUsers || instructors.length === 0}
