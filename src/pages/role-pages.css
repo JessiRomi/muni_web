@@ -1,0 +1,218 @@
+.participant-page,
+.instructor-page,
+.role-selector-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #1f211e;
+  color: #f4f1e9;
+}
+.participant-main,
+.instructor-main,
+.role-selector-main {
+  width: min(1200px, calc(100% - 56px));
+  margin: 0 auto;
+  padding: 56px 0 64px;
+  flex: 1;
+}
+.participant-eyebrow,
+.instructor-eyebrow,
+.role-selector-eyebrow {
+  display: block;
+  color: #f5bd55;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+.participant-main h1,
+.instructor-main h1,
+.role-selector-main h1 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 1.1;
+  margin: 0 0 22px;
+}
+.participant-description,
+.instructor-description,
+.role-selector-main > p {
+  font-size: 1.2rem;
+  color: #d1d0c7;
+  line-height: 1.7;
+  margin: 0 0 48px;
+}
+.participant-profile,
+.instructor-profile {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: #282a26;
+  border: 1px solid #484a42;
+  border-radius: 24px;
+  padding: 32px;
+  margin-bottom: 72px;
+}
+.participant-profile > svg,
+.instructor-profile > svg,
+.participant-card > svg,
+.instructor-card > svg {
+  color: #f5bd55;
+  flex-shrink: 0;
+}
+.participant-profile h2,
+.instructor-profile h2 {
+  font-size: 1.3rem;
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+}
+.participant-profile p,
+.instructor-profile p {
+  color: #d1d0c7;
+  font-size: 1.05rem;
+  margin: 0;
+}
+.participant-section,
+.instructor-section {
+  margin-bottom: 36px;
+}
+.participant-section h2,
+.instructor-section h2 {
+  font-size: 2rem;
+  margin: 0 0 28px;
+}
+.participant-card,
+.instructor-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 32px;
+  background: #282a26;
+  border: 1px solid #484a42;
+  border-radius: 24px;
+}
+.participant-card h3,
+.instructor-card h3 {
+  font-size: 1.4rem;
+  margin: 0 0 12px;
+}
+.participant-card p,
+.instructor-card p {
+  color: #d1d0c7;
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+.participant-card span,
+.instructor-card span {
+  display: inline-block;
+  color: #f5bd55;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.participant-card .participant-logout {
+  margin-left: 16px;
+}
+.participant-logout,
+.instructor-logout,
+.role-selector-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(110deg, #f3bd50, #ed9344);
+  color: #282923;
+  border: 0;
+  border-radius: 999px;
+  padding: 16px 26px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.participant-logout:hover,
+.instructor-logout:hover,
+.role-selector-logout:hover {
+  filter: brightness(1.08);
+}
+.role-selector-main > p {
+  margin-bottom: 40px;
+}
+.role-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+  margin-bottom: 36px;
+}
+.role-selector-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 12px;
+  min-height: 230px;
+  padding: 28px;
+  background: #282a26;
+  color: #f4f1e9;
+  border: 1px solid #484a42;
+  border-radius: 24px;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
+}
+.role-selector-card:hover {
+  transform: translateY(-3px);
+  border-color: #f5bd55;
+}
+.role-selector-card > svg,
+.role-selector-card > span {
+  color: #f5bd55;
+}
+.role-selector-card h2 {
+  font-size: 1.4rem;
+  margin: 0;
+}
+.role-selector-card p {
+  color: #d1d0c7;
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+}
+.role-selector-card > span {
+  font-weight: 800;
+}
+.role-selector-logout {
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .participant-main,
+  .instructor-main,
+  .role-selector-main {
+    width: calc(100% - 32px);
+    padding: 36px 0 44px;
+  }
+  .participant-profile,
+  .instructor-profile,
+  .participant-card,
+  .instructor-card {
+    gap: 16px;
+    padding: 22px;
+    border-radius: 18px;
+  }
+  .participant-profile {
+    align-items: flex-start;
+  }
+  .participant-section h2,
+  .instructor-section h2 {
+    font-size: 1.65rem;
+  }
+  .participant-description,
+  .instructor-description,
+  .role-selector-main > p {
+    font-size: 1.05rem;
+    margin-bottom: 32px;
+  }
+  .role-selector-card {
+    min-height: 190px;
+    padding: 22px;
+  }
+}

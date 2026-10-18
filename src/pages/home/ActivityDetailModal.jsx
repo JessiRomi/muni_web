@@ -67,7 +67,7 @@ export default function ActivityDetailModal({
     setEnrollmentMessage("");
     setEnrollmentError(false);
     try {
-      await activitiesService.enroll(activity.id, Number(user.id));
+      await activitiesService.enroll(activity.id);
       setEnrollmentMessage("¡Ya estás inscripto en esta actividad!");
     } catch (error) {
       console.error("Error al inscribirse:", error);

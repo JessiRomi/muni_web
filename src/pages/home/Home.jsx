@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getRoleDestination } from "../../utils/roleNavigation";
 import {
   Sun,
   Moon,
@@ -116,14 +117,14 @@ export default function Home({ darkMode, onToggleTheme }) {
     openGeneralLogin();
   }
 
-  function handleLoginSuccess() {
+  function handleLoginSuccess(authenticatedUser) {
     setLoginOpen(false);
     if (returnToActivity && selectedActivity) {
       setReturnToActivity(false);
       return;
     }
     setReturnToActivity(false);
-    navigate("/panel");
+    navigate(getRoleDestination(authenticatedUser?.roles));
   }
 
   function closeLogin() {

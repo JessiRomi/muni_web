@@ -54,12 +54,11 @@ export default function LoginModal({ isOpen, onClose, onSuccess }) {
     setIsSubmitting(true);
 
     try {
-      await login({
+      const authenticatedUser = await login({
         email: email.trim(),
         password,
       });
-
-      onSuccess?.();
+      onSuccess?.(authenticatedUser);
     } catch (err) {
       if (err.response?.status === 401) {
         setError("El correo electrónico o la contraseña son incorrectos.");

@@ -1,0 +1,98 @@
+.instructor-meeting-form {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 28px;
+  margin-bottom: 32px;
+  background: #282a26;
+  border: 1px solid #484a42;
+  border-radius: 24px;
+}
+
+.instructor-meeting-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.instructor-meeting-form-header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.instructor-meeting-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  color: #f4f1e9;
+  background: transparent;
+  border: 1px solid #484a42;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.instructor-meeting-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.instructor-meeting-form label {
+  font-weight: 600;
+}
+
+.instructor-meeting-form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  color: #f4f1e9;
+  background: #1f211e;
+  border: 1px solid #484a42;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.instructor-meeting-form input:focus-visible,
+.instructor-meeting-form button:focus-visible {
+  outline: 2px solid #f5bd55;
+  outline-offset: 2px;
+}
+
+.instructor-meeting-error {
+  color: #ff9b8f;
+  line-height: 1.5;
+}
+
+.instructor-meeting-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.instructor-meeting-actions button {
+  padding: 12px 20px;
+  color: #282923;
+  background: linear-gradient(110deg, #f3bd50, #ed9344);
+  border: 0;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.instructor-meeting-actions button:disabled,
+.instructor-meeting-close:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .instructor-meeting-form {
+    padding: 22px;
+    border-radius: 18px;
+  }
+}
