@@ -112,3 +112,133 @@
     padding: 13px 18px;
   }
 }
+
+.instructor-attendance-status {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  margin-top: 4px;
+  border: 1px solid #484a42;
+  border-radius: 12px;
+  background: rgba(245, 189, 85, 0.06);
+}
+
+.instructor-attendance-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 14px;
+}
+
+.attendance-state {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid #484a42;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.attendance-state--open {
+  color: #a7e4b0;
+  border-color: #3d7950;
+}
+
+.attendance-state--expired,
+.attendance-state--invalid {
+  color: #ffd18a;
+  border-color: #8b6735;
+}
+
+.attendance-state--scheduled {
+  color: #b9d8ff;
+  border-color: #45678c;
+}
+
+.attendance-state--closed,
+.attendance-state--none {
+  color: #d1d1c8;
+}
+
+.instructor-attendance-details {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.instructor-attendance-details > div {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.7fr) minmax(0, 1.3fr);
+  gap: 10px;
+}
+
+.instructor-attendance-details dt {
+  color: #c7c7bd;
+  font-size: 0.9rem;
+}
+
+.instructor-attendance-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.attendance-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.attendance-button {
+  border: 1px solid #f5bd55;
+  border-radius: 9px;
+  padding: 10px 14px;
+  background: #f5bd55;
+  color: #24241f;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.attendance-button--secondary {
+  color: #f5bd55;
+  background: transparent;
+}
+
+.attendance-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.attendance-feedback,
+.attendance-help {
+  margin: 12px 0 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.attendance-feedback--error {
+  color: #ffaaa5;
+}
+
+@media (max-width: 640px) {
+  .instructor-attendance-status {
+    padding: 12px;
+  }
+
+  .instructor-attendance-details > div {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  .attendance-actions {
+    flex-direction: column;
+  }
+
+  .attendance-button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,275 @@
+.instructor-attendance-page {
+  width: min(100% - 32px, 1000px);
+  margin: 0 auto;
+  padding: 36px 0 64px;
+  color: var(--text-primary, inherit);
+}
+
+.instructor-attendance-back,
+.instructor-attendance-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid #f5bd55;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.instructor-attendance-back {
+  margin-bottom: 32px;
+  background: transparent;
+  color: inherit;
+}
+
+.instructor-attendance-header {
+  margin-bottom: 28px;
+}
+
+.instructor-attendance-header h1 {
+  margin: 10px 0;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+}
+
+.instructor-attendance-header > p {
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.instructor-attendance-card {
+  padding: clamp(18px, 4vw, 30px);
+  border: 1px solid #484a42;
+  border-radius: 20px;
+  background: var(--surface, transparent);
+}
+
+.instructor-attendance-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.instructor-attendance-title > svg {
+  flex-shrink: 0;
+  color: #f5bd55;
+}
+
+.instructor-attendance-title h2 {
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+
+.instructor-attendance-title p {
+  margin: 0;
+  opacity: 0.75;
+}
+
+.instructor-attendance-meta {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.instructor-attendance-meta p {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.instructor-attendance-meta svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: #f5bd55;
+}
+
+.instructor-attendance-session {
+  display: grid;
+  gap: 18px;
+  margin-top: 24px;
+  padding: 18px;
+  border-radius: 12px;
+  background: rgba(245, 189, 85, 0.07);
+}
+
+.instructor-attendance-session > div {
+  display: grid;
+  gap: 7px;
+}
+
+.instructor-attendance-label {
+  font-size: 0.88rem;
+  opacity: 0.75;
+}
+
+.instructor-attendance-session strong {
+  overflow-wrap: anywhere;
+}
+
+.instructor-attendance-roster {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #484a42;
+}
+
+.instructor-attendance-roster-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.instructor-attendance-roster-title svg {
+  color: #f5bd55;
+}
+
+.instructor-attendance-roster-title h3 {
+  margin: 0;
+}
+
+.instructor-attendance-roster > p {
+  line-height: 1.6;
+}
+
+.instructor-attendance-note {
+  padding: 12px;
+  border-radius: 9px;
+  background: rgba(245, 189, 85, 0.07);
+  font-size: 0.9rem;
+}
+
+.instructor-attendance-empty {
+  padding: 28px 12px;
+  text-align: center;
+}
+
+.instructor-attendance-empty svg {
+  color: #f5bd55;
+}
+
+.instructor-attendance-empty h3 {
+  margin-bottom: 8px;
+}
+
+.instructor-attendance-empty p {
+  line-height: 1.6;
+}
+
+.instructor-attendance-error {
+  margin-top: 18px;
+  color: #ffaaa5;
+  line-height: 1.5;
+}
+
+.instructor-attendance-refresh {
+  margin-top: 20px;
+  background: #f5bd55;
+  color: #24241f;
+}
+
+.instructor-attendance-back:disabled,
+.instructor-attendance-refresh:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 600px) {
+  .instructor-attendance-page {
+    padding-top: 24px;
+  }
+
+  .instructor-attendance-session {
+    padding: 14px;
+  }
+
+  .instructor-attendance-refresh,
+  .instructor-attendance-back {
+    width: 100%;
+  }
+}
+
+/* Corrección de contraste de la pantalla de asistencia */
+.instructor-attendance-card {
+  color: #24241f;
+  background: #f7f6f0;
+  border-color: #d8d5ca;
+}
+
+.instructor-attendance-title h2,
+.instructor-attendance-title p,
+.instructor-attendance-meta p,
+.instructor-attendance-session strong,
+.instructor-attendance-roster-title h3,
+.instructor-attendance-roster > p,
+.instructor-attendance-empty h3,
+.instructor-attendance-empty p {
+  color: #24241f;
+}
+
+.instructor-attendance-session {
+  background: #eee9da;
+}
+
+.instructor-attendance-note {
+  color: #514a38;
+  background: #eee9da;
+}
+
+.instructor-attendance-label {
+  color: #5e5b52;
+  opacity: 1;
+}
+
+.instructor-attendance-card .instructor-attendance-error {
+  color: #b42318;
+}
+
+.instructor-attendance-card .instructor-attendance-refresh {
+  color: #24241f;
+}
+
+.instructor-attendance-back {
+  color: inherit;
+}
+
+.instructor-attendance-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 18px;
+}
+
+.instructor-attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.instructor-attendance-table th,
+.instructor-attendance-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #d8d5ca;
+  color: #24241f;
+  white-space: nowrap;
+}
+
+.instructor-attendance-table th {
+  font-size: 0.9rem;
+  color: #5e5b52;
+  font-weight: 700;
+}
+
+.instructor-attendance-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 600px) {
+  .instructor-attendance-table th,
+  .instructor-attendance-table td {
+    padding: 11px 8px;
+    font-size: 0.88rem;
+  }
+}

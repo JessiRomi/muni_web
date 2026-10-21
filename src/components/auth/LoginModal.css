@@ -219,3 +219,53 @@
     animation: none;
   }
 }
+
+.login-modal-register {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.login-optional {
+  font-size: 0.85em;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.login-mode-switch {
+  margin-top: 18px;
+  text-align: center;
+}
+
+.login-mode-switch p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.login-mode-switch button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.login-mode-switch button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.login-success {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #e8f5e9;
+  color: #216e39;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.login-error {
+  overflow-wrap: anywhere;
+}

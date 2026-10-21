@@ -26,6 +26,7 @@ export default function ActivityDetailModal({
   activity,
   onClose,
   onContinue,
+  onEnrolled,
   isAuthenticated,
   user,
 }) {
@@ -39,6 +40,7 @@ export default function ActivityDetailModal({
   }, [activity?.id]);
   useEffect(() => {
     if (!activity) return undefined;
+
     function handleKeyDown(event) {
       if (event.key === "Escape" && !enrolling) onClose();
     }
@@ -46,6 +48,7 @@ export default function ActivityDetailModal({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activity, onClose, enrolling]);
   if (!activity) return null;
+
   async function handleEnroll() {
     if (!isAuthenticated) {
       onContinue();
@@ -69,6 +72,15 @@ export default function ActivityDetailModal({
     try {
       await activitiesService.enroll(activity.id);
       setEnrollmentMessage("¡Ya estás inscripto en esta actividad!");
+
+      try {
+        await onEnrolled?.();
+      } catch (refreshError) {
+        console.error(
+          "Error al actualizar el panel después de la inscripción:",
+          refreshError,
+        );
+      }
     } catch (error) {
       console.error("Error al inscribirse:", error);
       setEnrollmentMessage(getErrorMessage(error));

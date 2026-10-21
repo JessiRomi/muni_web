@@ -8,6 +8,7 @@ import RoleSelector from "./pages/roles/RoleSelector";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 import { getRoleDestination } from "./utils/roleNavigation";
+import InstructorAttendance from "./pages/instructor/InstructorAttendance";
 import "./App.css";
 
 function AuthenticatedEntry() {
@@ -51,6 +52,10 @@ function App() {
         </Route>
         <Route element={<ProtectedRoute allowedRoles={["INSTRUCTOR"]} />}>
           <Route path="/instructor" element={<InstructorDashboard />} />
+          <Route
+            path="/instructor/encuentros/:meetingId/asistencia"
+            element={<InstructorAttendance />}
+          />
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/elegir-rol" element={<RoleSelector />} />
