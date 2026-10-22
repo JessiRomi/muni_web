@@ -56,6 +56,39 @@ function formatDate(value) {
   }
   return date.toLocaleDateString("es-AR");
 }
+function getEnrollmentState(activity, now = Date.now()) {
+  const start = new Date(activity.enrollmentStart).getTime();
+  const end = new Date(activity.enrollmentEnd).getTime();
+
+  if (
+    !activity.enrollmentStart ||
+    !activity.enrollmentEnd ||
+    !Number.isFinite(start) ||
+    !Number.isFinite(end) ||
+    end <= start
+  ) {
+    return {
+      label: "Inscripción no disponible",
+      kind: "unknown",
+    };
+  }
+  if (now < start) {
+    return {
+      label: "Inscripciones próximamente",
+      kind: "pending",
+    };
+  }
+  if (now > end) {
+    return {
+      label: "Inscripciones cerradas",
+      kind: "expired",
+    };
+  }
+  return {
+    label: "Inscripciones abiertas",
+    kind: "open",
+  };
+}
 
 export default function Home({ darkMode, onToggleTheme }) {
   const navigate = useNavigate();
@@ -243,6 +276,7 @@ export default function Home({ darkMode, onToggleTheme }) {
               {!activitiesLoading &&
                 !activitiesError &&
                 publicActivities.map((activity, index) => {
+                  const enrollmentState = getEnrollmentState(activity);
                   const style = cardStyles[index % cardStyles.length];
                   const Icon = style.icon;
                   const gradientId = `gradient-activity-${activity.id}`;
@@ -296,15 +330,21 @@ export default function Home({ darkMode, onToggleTheme }) {
                         </div>
                         <div className="card-meta">
                           <span>
-                            <CalendarDays size={15} />
+                            <CalendarDays size={15} aria-hidden="true" />
                             {activity.enrollmentStart
-                              ? `Inscripción desde ${formatDate(
-                                  activity.enrollmentStart,
-                                )}`
+                              ? `Inscripción desde ${formatDate(activity.enrollmentStart)}`
                               : "Fecha a confirmar"}
                           </span>
+
+                          <span
+                            className={`card-enrollment-status card-enrollment-status--${enrollmentState.kind}`}
+                            role="status"
+                          >
+                            {enrollmentState.label}
+                          </span>
+
                           <span>
-                            <MapPin size={15} />
+                            <MapPin size={15} aria-hidden="true" />
                             Cipolletti
                           </span>
                         </div>

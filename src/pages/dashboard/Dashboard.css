@@ -411,3 +411,69 @@
     transition: none;
   }
 }
+
+.dashboard-activity-detail {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 10px 0 !important;
+  color: var(--dashboard-muted);
+  font-size: 13px;
+}
+
+.dashboard-activity-detail svg {
+  flex-shrink: 0;
+}
+
+.activity-enrollment-status {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--dashboard-border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.activity-enrollment-status--open {
+  color: #237748;
+  background: #e7f6ec;
+  border-color: #b6e2c4;
+}
+
+.activity-enrollment-status--pending {
+  color: #855b12;
+  background: #fff4d7;
+  border-color: #f0d48c;
+}
+
+.activity-enrollment-status--expired {
+  color: #a13232;
+  background: #fdeaea;
+  border-color: #efc0c0;
+}
+
+.activity-enrollment-status--unknown {
+  color: var(--dashboard-muted);
+  background: var(--dashboard-surface);
+}
+
+.app.theme-dark .activity-enrollment-status--open {
+  color: #a9e7bc;
+  background: #203b2b;
+  border-color: #376548;
+}
+
+.app.theme-dark .activity-enrollment-status--pending {
+  color: #ffdc8c;
+  background: #443820;
+  border-color: #76602f;
+}
+
+.app.theme-dark .activity-enrollment-status--expired {
+  color: #ffb3b3;
+  background: #482929;
+  border-color: #794141;
+}

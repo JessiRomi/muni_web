@@ -564,7 +564,9 @@
   background: #282a26;
   border: 1px solid #484a42;
   border-radius: 24px;
-  transition: border-color 0.2s, transform 0.2s;
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
 }
 
 .participant-activity-card:hover {
@@ -743,5 +745,125 @@
 
   .participant-activity-heading h3 {
     font-size: 1.15rem;
+  }
+}
+
+/* Perfil del participante: formulario de edición */
+.participant-profile-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 1.5rem;
+  width: 100%;
+  margin-top: 1.5rem;
+  align-items: start;
+}
+
+.participant-profile-form > label {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  min-width: 0;
+  color: var(--text-primary, #f3f0e8);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.participant-profile-form > label input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(232, 187, 91, 0.35);
+  border-radius: 12px;
+  background: #20221f;
+  color: #f3f0e8;
+  font: inherit;
+  font-weight: 400;
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.participant-profile-form > label input:focus {
+  border-color: #e8bb5b;
+  box-shadow: 0 0 0 3px rgba(232, 187, 91, 0.15);
+}
+
+.participant-profile-form > label input:disabled {
+  opacity: 1;
+  color: #b9b8b1;
+  background: #30312d;
+  cursor: not-allowed;
+}
+
+.participant-profile-form > label:nth-of-type(3) {
+  grid-column: 1 / -1;
+}
+
+.participant-profile-form > label:nth-of-type(4) {
+  grid-column: 1 / -1;
+}
+
+.participant-profile-form > label small {
+  color: #b9b8b1;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.participant-profile-form > [role="alert"] {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.participant-profile-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.participant-profile-actions button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 46px;
+  padding: 0.75rem 1.25rem;
+}
+
+.participant-profile-actions button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* Perfil en pantallas pequeñas */
+@media (max-width: 640px) {
+  .participant-profile-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .participant-profile-form > label:nth-of-type(3),
+  .participant-profile-form > label:nth-of-type(4),
+  .participant-profile-form > [role="alert"],
+  .participant-profile-actions {
+    grid-column: 1;
+  }
+
+  .participant-profile-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .participant-profile-actions button {
+    width: 100%;
   }
 }

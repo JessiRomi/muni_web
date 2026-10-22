@@ -16,6 +16,44 @@ function formatDate(value) {
   if (Number.isNaN(date.getTime())) return "Fecha a confirmar";
   return date.toLocaleDateString("es-AR");
 }
+
+function getEnrollmentState(activity, now = Date.now()) {
+  const start = new Date(activity.enrollmentStart).getTime();
+  const end = new Date(activity.enrollmentEnd).getTime();
+
+  if (
+    !activity.enrollmentStart ||
+    !activity.enrollmentEnd ||
+    !Number.isFinite(start) ||
+    !Number.isFinite(end) ||
+    end <= start
+  ) {
+    return {
+      label: "Fechas de inscripción no disponibles",
+      canEnroll: false,
+    };
+  }
+
+  if (now < start) {
+    return {
+      label: "Las inscripciones todavía no comenzaron",
+      canEnroll: false,
+    };
+  }
+
+  if (now > end) {
+    return {
+      label: "Inscripción vencida",
+      canEnroll: false,
+    };
+  }
+
+  return {
+    label: "Inscripción abierta",
+    canEnroll: true,
+  };
+}
+
 function getErrorMessage(error) {
   const message = error.response?.data?.message;
   return Array.isArray(message)
@@ -49,7 +87,14 @@ export default function ActivityDetailModal({
   }, [activity, onClose, enrolling]);
   if (!activity) return null;
 
+  const enrollmentState = getEnrollmentState(activity);
+
   async function handleEnroll() {
+    if (!enrollmentState.canEnroll) {
+      setEnrollmentError(true);
+      setEnrollmentMessage(enrollmentState.label);
+      return;
+    }
     if (!isAuthenticated) {
       onContinue();
       return;
@@ -147,6 +192,17 @@ export default function ActivityDetailModal({
             </span>
           </div>
         </div>
+        <p
+          className={`activity-enrollment-status ${
+            enrollmentState.canEnroll
+              ? "activity-enrollment-status--open"
+              : "activity-enrollment-status--closed"
+          }`}
+          role="status"
+        >
+          {enrollmentState.label}
+        </p>
+
         {enrollmentMessage && (
           <p
             role={enrollmentError ? "alert" : "status"}
@@ -163,7 +219,7 @@ export default function ActivityDetailModal({
           className="activity-detail-cta"
           type="button"
           onClick={handleEnroll}
-          disabled={enrolling || Boolean(enrollmentMessage && !enrollmentError)}
+          disabled={enrolling ||!enrollmentState.canEnroll ||Boolean(enrollmentMessage && !enrollmentError)}
         >
           {enrolling
             ? "Inscribiendo..."

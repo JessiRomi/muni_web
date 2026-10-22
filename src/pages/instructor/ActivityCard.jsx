@@ -36,6 +36,42 @@ function formatDate(value) {
     hour12: false,
   });
 }
+function getEnrollmentState(activity, now = Date.now()) {
+  const start = new Date(activity.enrollmentStart).getTime();
+  const end = new Date(activity.enrollmentEnd).getTime();
+
+  if (
+    !activity.enrollmentStart ||
+    !activity.enrollmentEnd ||
+    !Number.isFinite(start) ||
+    !Number.isFinite(end) ||
+    end <= start
+  ) {
+    return {
+      label: "Fechas no disponibles",
+      kind: "unknown",
+    };
+  }
+
+  if (now < start) {
+    return {
+      label: "Inscripción pendiente",
+      kind: "pending",
+    };
+  }
+
+  if (now > end) {
+    return {
+      label: "Inscripción vencida",
+      kind: "expired",
+    };
+  }
+
+  return {
+    label: "Inscripción abierta",
+    kind: "open",
+  };
+}
 
 function getSessionState(session, now) {
   if (session.status === "CLOSED") {
@@ -250,6 +286,21 @@ export default function ActivityCard({ activity, onCreateMeeting }) {
 
         <p>
           <strong>Capacidad:</strong> {activity.capacity ?? "No definida"}
+        </p>
+
+        <p>
+          <strong>Inicio de inscripción:</strong>{" "}
+          {formatDate(activity.enrollmentStart)}
+        </p>
+
+        <p>
+          <strong>Fin de inscripción:</strong>{" "}
+          {formatDate(activity.enrollmentEnd)}
+        </p>
+
+        <p>
+          <strong>Estado de inscripción:</strong>{" "}
+          {getEnrollmentState(activity).label}
         </p>
 
         <p>
