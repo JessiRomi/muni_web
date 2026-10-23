@@ -334,6 +334,7 @@ export default function ActivityCard({ activity, onCreateMeeting }) {
                   navigate(`/instructor/encuentros/${meeting.id}/asistencia`, {
                     state: {
                       meeting,
+                      activityId: activity.id,
                       activityName: activity.name,
                       enrollments: activity.enrollments || [],
                     },

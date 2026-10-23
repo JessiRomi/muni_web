@@ -16,8 +16,42 @@ export const activitiesService = {
     return data;
   },
 
+  async getActiveEnrollments(activityId) {
+    const { data } = await api.get(
+      `/activities/${Number(activityId)}/active-enrollments`,
+    );
+    return data;
+  },
+
   async create(activity) {
     const { data } = await api.post("/activities", activity);
+    return data;
+  },
+
+  async update(activityId, activity) {
+    const { data } = await api.patch(
+      `/activities/${Number(activityId)}`,
+      activity,
+    );
+    return data;
+  },
+
+  async delete(activityId) {
+    const { data } = await api.delete(`/activities/${Number(activityId)}`);
+    return data;
+  },
+
+  async finish(activityId) {
+    const { data } = await api.patch(
+      `/activities/${Number(activityId)}/finish`,
+    );
+    return data;
+  },
+  
+  async reactivate(activityId) {
+    const { data } = await api.patch(
+      `/activities/${Number(activityId)}/reactivate`,
+    );
     return data;
   },
 
@@ -26,7 +60,6 @@ export const activitiesService = {
       `/activities/${activityId}/enrollments`,
       {},
     );
-
     return data;
   },
 
@@ -35,7 +68,6 @@ export const activitiesService = {
       `/activities/${activityId}/enrollments/withdraw`,
       {},
     );
-
     return data;
   },
 };

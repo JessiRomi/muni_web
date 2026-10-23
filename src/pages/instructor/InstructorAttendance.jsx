@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   CalendarDays,
@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import attendanceService from "../../services/attendanceService";
+import activitiesService from "../../services/activitiesService";
 import "./InstructorAttendance.css";
 
 function formatDate(value) {
@@ -50,7 +51,7 @@ function getAttendanceLabel(status, session) {
   if (status === "ABSENT") return "Ausente";
 
   if (session?.absencesProcessed) {
-    return "Sin registro";
+    return "Ausente";
   }
 
   return "Pendiente";
@@ -63,24 +64,17 @@ export default function InstructorAttendance() {
 
   const meeting = location.state?.meeting;
   const activityName = location.state?.activityName;
-
-  const enrollments = useMemo(
-    () =>
-      Array.isArray(location.state?.enrollments)
-        ? location.state.enrollments.filter(
-            (enrollment) => enrollment.status === "ACTIVE",
-          )
-        : [],
-    [location.state?.enrollments],
-  );
+  const activityId = location.state?.activityId;
 
   const [session, setSession] = useState(null);
   const [attendanceRecords, setAttendanceRecords] = useState([]);
+  const [activeEnrollments, setActiveEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [attendanceLoading, setAttendanceLoading] = useState(false);
   const [error, setError] = useState("");
   const [attendanceError, setAttendanceError] = useState("");
-
+  const [processingAbsences, setProcessingAbsences] = useState(false);
+  const [absenceNotice, setAbsenceNotice] = useState("");
   const hasLoadedRef = useRef(false);
   const sessionIdRef = useRef(null);
 
@@ -96,6 +90,16 @@ export default function InstructorAttendance() {
     }
 
     try {
+      const enrollmentsData = activityId
+        ? await activitiesService.getActiveEnrollments(activityId)
+        : [];
+
+      const currentEnrollments = Array.isArray(enrollmentsData)
+        ? enrollmentsData.filter((enrollment) => enrollment.status === "ACTIVE")
+        : [];
+
+      setActiveEnrollments(currentEnrollments);
+
       const data = await attendanceService.getSessionByMeeting(meetingId);
       const currentSession = data || null;
 
@@ -103,7 +107,7 @@ export default function InstructorAttendance() {
         setSession(null);
         setAttendanceRecords([]);
         sessionIdRef.current = null;
-        hasLoadedRef.current = true;
+        setAttendanceError("");
         return;
       }
 
@@ -117,62 +121,35 @@ export default function InstructorAttendance() {
 
       setSession(currentSession);
       sessionIdRef.current = currentSession.id;
-      hasLoadedRef.current = true;
       setError("");
 
-      if (enrollments.length === 0) {
+      if (currentEnrollments.length === 0) {
         setAttendanceRecords([]);
+        setAttendanceError("");
         return;
       }
 
-      const previousRecords = sessionChanged ? [] : attendanceRecords;
-
-      const results = await Promise.all(
-        enrollments.map(async (enrollment) => {
-          try {
-            const history = await attendanceService.getHistory(
-              enrollment.participantId,
-            );
-
-            const records = Array.isArray(history) ? history : [];
-
-            const record = records.find(
-              (item) => Number(item.sessionId) === Number(currentSession.id),
-            );
-
-            return {
-              participantId: enrollment.participantId,
-              status: record?.status || null,
-              checkInTime: record?.checkInTime || null,
-              error: false,
-            };
-          } catch {
-            const previousRecord = previousRecords.find(
-              (item) =>
-                Number(item.participantId) === Number(enrollment.participantId),
-            );
-
-            return previousRecord
-              ? { ...previousRecord, error: true }
-              : {
-                  participantId: enrollment.participantId,
-                  status: null,
-                  checkInTime: null,
-                  error: true,
-                };
-          }
-        }),
+      const records = await attendanceService.getSessionAttendances(
+        currentSession.id,
       );
 
-      setAttendanceRecords(results);
+      const sessionRecords = Array.isArray(records) ? records : [];
 
-      if (results.some((record) => record.error)) {
-        setAttendanceError(
-          "No se pudieron actualizar todos los historiales. Se conservan los últimos datos disponibles cuando los había.",
+      const results = currentEnrollments.map((enrollment) => {
+        const record = sessionRecords.find(
+          (item) =>
+            Number(item.participantId) === Number(enrollment.participantId),
         );
-      } else {
-        setAttendanceError("");
-      }
+
+        return {
+          participantId: enrollment.participantId,
+          status: record?.status || null,
+          checkInTime: record?.checkInTime || null,
+        };
+      });
+
+      setAttendanceRecords(results);
+      setAttendanceError("");
     } catch (err) {
       const message =
         err.response?.data?.message ||
@@ -182,16 +159,51 @@ export default function InstructorAttendance() {
       if (isInitialLoad) {
         setError(message);
       } else {
-        setAttendanceError(
-          `No se pudo actualizar la información. Se conservan los datos anteriores. ${message}`,
-        );
+        setAttendanceError(`No se pudo actualizar la información. ${message}`);
       }
     } finally {
       hasLoadedRef.current = true;
       setLoading(false);
       setAttendanceLoading(false);
     }
-  }, [meetingId, enrollments]);
+  }, [meetingId, activityId]);
+
+  const handleProcessAbsences = useCallback(async () => {
+    if (
+      !session?.id ||
+      session.status !== "CLOSED" ||
+      session.absencesProcessed ||
+      processingAbsences ||
+      loading ||
+      attendanceLoading
+    ) {
+      return;
+    }
+
+    setProcessingAbsences(true);
+    setAbsenceNotice("");
+    setAttendanceError("");
+
+    try {
+      const result = await attendanceService.processAbsences(session.id);
+
+      await loadSession();
+
+      setAbsenceNotice(
+        result?.message || `Ausencias procesadas: ${result?.processed ?? 0}.`,
+      );
+    } catch (err) {
+      const message =
+        err.response?.data?.message ||
+        err.message ||
+        "No se pudieron procesar las ausencias.";
+
+      await loadSession();
+      setAttendanceError(message);
+    } finally {
+      setProcessingAbsences(false);
+    }
+  }, [session, processingAbsences, loading, attendanceLoading, loadSession]);
 
   useEffect(() => {
     loadSession();
@@ -304,7 +316,7 @@ export default function InstructorAttendance() {
 
           <p>Participantes con inscripción activa en esta actividad.</p>
 
-          {enrollments.length === 0 ? (
+          {activeEnrollments.length === 0 ? (
             <div className="instructor-attendance-empty">
               <Users size={28} />
               <h3>No hay inscripciones activas disponibles</h3>
@@ -327,7 +339,7 @@ export default function InstructorAttendance() {
                 </thead>
 
                 <tbody>
-                  {enrollments.map((enrollment) => {
+                  {activeEnrollments.map((enrollment) => {
                     const record = attendanceRecords.find(
                       (item) =>
                         Number(item.participantId) ===
@@ -336,16 +348,18 @@ export default function InstructorAttendance() {
 
                     return (
                       <tr key={enrollment.id}>
-                        <td>Participante #{enrollment.participantId}</td>
+                        <td>
+                          {enrollment.participant
+                            ? `${enrollment.participant.firstName} ${enrollment.participant.lastName}`
+                            : `Participante #${enrollment.participantId}`}
+                        </td>
                         <td>Activa</td>
                         <td>
                           {loading || attendanceLoading
                             ? record
                               ? getAttendanceLabel(record.status, session)
                               : "Consultando..."
-                            : record?.error
-                              ? "No disponible"
-                              : getAttendanceLabel(record?.status, session)}
+                            : getAttendanceLabel(record?.status, session)}
                         </td>
                         <td>
                           {record?.checkInTime
@@ -378,7 +392,7 @@ export default function InstructorAttendance() {
           className="instructor-attendance-refresh"
           type="button"
           onClick={loadSession}
-          disabled={loading || attendanceLoading}
+          disabled={loading || attendanceLoading || processingAbsences}
         >
           <RefreshCw
             size={17}
@@ -390,6 +404,30 @@ export default function InstructorAttendance() {
               ? "Cargando..."
               : "Actualizar estado"}
         </button>
+        {session?.status === "CLOSED" && !session.absencesProcessed && (
+          <button
+            className="instructor-attendance-refresh"
+            type="button"
+            onClick={handleProcessAbsences}
+            disabled={processingAbsences || loading || attendanceLoading}
+          >
+            {processingAbsences
+              ? "Procesando ausencias..."
+              : "Procesar ausencias"}
+          </button>
+        )}
+
+        {session?.absencesProcessed && (
+          <p className="instructor-attendance-note" role="status">
+            Las ausencias de esta sesión ya fueron procesadas.
+          </p>
+        )}
+
+        {absenceNotice && (
+          <p className="instructor-attendance-note" role="status">
+            {absenceNotice}
+          </p>
+        )}
       </section>
     </main>
   );

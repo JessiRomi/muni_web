@@ -46,6 +46,13 @@ const attendanceService = {
 
     return data;
   },
+  
+  async getSessionAttendances(sessionId) {
+    const { data } = await api.get(
+      `/attendance/session/${Number(sessionId)}/records`,
+    );
+    return data;
+  },
 
   async processAbsences(sessionId) {
     const { data } = await api.post("/attendance/process-absences", {

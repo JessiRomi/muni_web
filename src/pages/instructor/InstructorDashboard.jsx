@@ -6,10 +6,16 @@ import ActivityCard from "./ActivityCard";
 import MeetingForm from "./MeetingForm";
 import SiteFooter from "../../components/layout/SiteFooter";
 import "../role-pages.css";
+import ParticipantProfile from "../participant/components/ParticipantProfile";
+import useParticipantProfile from "../participant/hooks/useParticipantProfile";
 import "./InstructorDashboard.css";
 
 export default function InstructorDashboard() {
   const { user, logout } = useAuth();
+  const profileState = useParticipantProfile();
+  useEffect(() => {
+    profileState.loadMyProfile();
+  }, [profileState.loadMyProfile]);
 
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -75,14 +81,7 @@ export default function InstructorDashboard() {
           Consultá tus actividades y organizá los próximos encuentros.
         </p>
 
-        <section className="instructor-profile">
-          <GraduationCap size={28} />
-
-          <div>
-            <h2>{user?.email || "Instructor"}</h2>
-            <p>Rol: INSTRUCTOR</p>
-          </div>
-        </section>
+        <ParticipantProfile {...profileState} user={user} />
 
         <section className="instructor-section">
           <span className="instructor-eyebrow">MI TRABAJO</span>

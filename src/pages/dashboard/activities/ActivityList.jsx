@@ -1,4 +1,12 @@
-import { CalendarDays, Clock3, Users } from "lucide-react";
+import {
+  CalendarDays,
+  Clock3,
+  Users,
+  Pencil,
+  Trash2,
+  CheckCircle2,
+  RotateCcw,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 function formatDate(value) {
@@ -19,6 +27,13 @@ function formatDate(value) {
 }
 
 function getEnrollmentState(activity, now = Date.now()) {
+  if (activity.status === "FINISHED") {
+    return {
+      label: "Inscripciones cerradas",
+      className: "activity-enrollment-status--expired",
+    };
+  }
+
   const start = new Date(activity.enrollmentStart).getTime();
   const end = new Date(activity.enrollmentEnd).getTime();
 
@@ -55,7 +70,20 @@ function getEnrollmentState(activity, now = Date.now()) {
   };
 }
 
-export default function ActivityList({ activities, loading, error, onRetry }) {
+export default function ActivityList({
+  activities,
+  loading,
+  error,
+  onRetry,
+  isAdmin = false,
+  deletingId = null,
+  finishingId = null,
+  reactivatingId = null,
+  onEdit,
+  onDelete,
+  onFinish,
+  onReactivate,
+}) {
   const [now, setNow] = useState(null);
 
   useEffect(() => {
@@ -65,6 +93,7 @@ export default function ActivityList({ activities, loading, error, onRetry }) {
 
     return () => clearTimeout(timer);
   }, []);
+
   if (loading) {
     return <p>Cargando actividades...</p>;
   }
@@ -83,6 +112,10 @@ export default function ActivityList({ activities, loading, error, onRetry }) {
   if (activities.length === 0) {
     return <p>Todavía no hay actividades registradas.</p>;
   }
+
+  const hasPendingAction =
+    deletingId !== null || finishingId !== null || reactivatingId !== null;
+
   return (
     <div className="dashboard-activities-list">
       {activities.map((activity) => {
@@ -93,6 +126,13 @@ export default function ActivityList({ activities, loading, error, onRetry }) {
                 className: "activity-enrollment-status--unknown",
               }
             : getEnrollmentState(activity, now);
+
+        const isFinished = activity.status === "FINISHED";
+
+        const isProcessing =
+          deletingId === activity.id ||
+          finishingId === activity.id ||
+          reactivatingId === activity.id;
 
         return (
           <article className="dashboard-activity" key={activity.id}>
@@ -125,6 +165,74 @@ export default function ActivityList({ activities, loading, error, onRetry }) {
               >
                 {enrollmentState.label}
               </span>
+
+              <span
+                className={`activity-enrollment-status ${
+                  isFinished
+                    ? "activity-enrollment-status--expired"
+                    : "activity-enrollment-status--open"
+                }`}
+              >
+                {isFinished ? "Actividad finalizada" : "Actividad activa"}
+              </span>
+
+              {isAdmin && (
+                <div className="dashboard-activity-actions">
+                  {!isFinished && (
+                    <>
+                      <button
+                        className="dashboard-logout"
+                        type="button"
+                        onClick={() => onEdit?.(activity)}
+                        disabled={hasPendingAction}
+                        aria-label={`Editar ${activity.name}`}
+                      >
+                        <Pencil size={16} />
+                        Editar
+                      </button>
+
+                      <button
+                        className="dashboard-logout"
+                        type="button"
+                        onClick={() => onFinish?.(activity)}
+                        disabled={hasPendingAction}
+                        aria-label={`Finalizar ${activity.name}`}
+                      >
+                        <CheckCircle2 size={16} />
+                        {finishingId === activity.id
+                          ? "Finalizando..."
+                          : "Finalizar"}
+                      </button>
+                    </>
+                  )}
+
+                  {isFinished && (
+                    <button
+                      className="dashboard-logout"
+                      type="button"
+                      onClick={() => onReactivate?.(activity)}
+                      disabled={hasPendingAction}
+                      aria-label={`Reactivar ${activity.name}`}
+                    >
+                      <RotateCcw size={16} />
+                      {reactivatingId === activity.id
+                        ? "Reactivando..."
+                        : "Reactivar"}
+                    </button>
+                  )}
+
+                  <button
+                    className="dashboard-logout"
+                    type="button"
+                    onClick={() => onDelete?.(activity)}
+                    disabled={hasPendingAction || isProcessing}
+                    aria-label={`Eliminar ${activity.name}`}
+                  >
+                    <Trash2 size={16} />
+                    {deletingId === activity.id ? "Eliminando..." : "Eliminar"}
+                  </button>
+                </div>
+              )}
             </div>
           </article>
         );
