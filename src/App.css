@@ -1,146 +1,68 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-
-  scroll-padding-top: 76px;
-}
-
-body {
-  margin: 0;
-
-  font-family: "DM Sans", sans-serif;
-}
-
-button,
-a {
-  font: inherit;
-
-  -webkit-tap-highlight-color: transparent;
-}
-
-button {
-  cursor: pointer;
-}
-
-a {
-  color: inherit;
-
-  text-decoration: none;
-}
 
 .app {
   --bg: #f8f6f0;
-
   --surface: #f8f6f0;
-
   --text: #242520;
-
   --muted: #6d6d65;
-
   --accent: #ffb52f;
-
   --accent-strong: #ff8b2a;
-
   --dark: #20211e;
-
   --header-bg: #20211e;
-
   --header-text: #f8f5eb;
-
   --section-bg: #f8f6f0;
-
   --section-text: #25251f;
-
   --section-muted: #66665f;
-
   --community-bg: #20211e;
-
   --community-text: #f8f5eb;
-
   --community-muted: #c6c4bb;
 
   min-height: 100vh;
-
   overflow: clip;
-
   color: var(--text);
-
   background: var(--bg);
 }
 
 .app.theme-dark {
   --bg: #20221e;
-
   --surface: #f8f6f0;
-
   --text: #f6f3eb;
-
   --muted: #aaa99f;
-
   --dark: #20211e;
-
   --header-bg: #20211e;
-
   --header-text: #f8f5eb;
-
   --section-bg: #20221e;
-
   --section-text: #f6f3eb;
-
   --section-muted: #c6c4bb;
-
   --community-bg: #171815;
-
   --community-text: #f8f5eb;
-
   --community-muted: #c6c4bb;
 }
 
 .site-footer {
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   gap: 20px;
-
   padding: 20px clamp(24px, 6.2vw, 100px);
-
   background: var(--community-bg);
-
   color: var(--community-muted);
-
   font-size: 10px;
 }
 
 .footer-brand {
   display: inline-flex;
-
   align-items: center;
-
   gap: 8px;
-
   color: #ffb52f;
-
   font-size: 11px;
-
   font-weight: 700;
-
   letter-spacing: 1px;
 }
 
 @media (max-width: 760px) {
   .site-footer {
     padding: 20px;
-
     align-items: flex-start;
-
     flex-direction: column;
   }
 }

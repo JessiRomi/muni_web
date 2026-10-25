@@ -201,30 +201,6 @@
   border-color: rgba(244, 181, 68, 0.55);
 }
 
-/* Modal: tamaño y encabezado */
-.dashboard-modal {
-  width: min(800px, calc(100vw - 40px));
-  max-height: 88vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #77796c #222620;
-}
-
-.dashboard-modal-heading {
-  padding: 20px 26px 16px;
-}
-
-.dashboard-modal-heading h2 {
-  margin: 5px 0 7px;
-  font-size: clamp(22px, 3vw, 28px);
-}
-
-.dashboard-modal-heading p {
-  font-size: 13px;
-  line-height: 1.5;
-}
-
 /* Dos columnas: etiquetas arriba de sus campos */
 @media (min-width: 650px) {
   .activity-form {
@@ -253,15 +229,6 @@
 
   .activity-form-section--modal {
     padding: 16px 18px 20px;
-  }
-
-  .dashboard-modal {
-    width: calc(100vw - 20px);
-    max-height: 92vh;
-  }
-
-  .dashboard-modal-heading {
-    padding: 18px 18px 14px;
   }
 
   .activity-form-actions {
@@ -308,22 +275,6 @@
   min-height: 64px;
 }
 
-/* Modal compacto y centrado */
-.dashboard-modal {
-  width: min(780px, calc(100vw - 32px));
-  max-height: 88vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.dashboard-modal-heading {
-  padding: 18px 24px 14px;
-}
-
-.dashboard-modal-heading h2 {
-  font-size: clamp(23px, 3vw, 29px);
-}
-
 .activity-form-section--modal {
   padding: 16px 24px 20px;
 }
@@ -345,14 +296,6 @@
 }
 
 @media (max-width: 600px) {
-  .dashboard-modal {
-    width: calc(100vw - 20px);
-    max-height: 92vh;
-  }
-
-  .dashboard-modal-heading {
-    padding: 16px 18px 12px;
-  }
 
   .activity-form-section--modal {
     padding: 14px 18px 18px;

@@ -198,3 +198,15 @@
     font-size: 25px;
   }
 }
+
+.activity-enrollment-status--open {
+  color: #256b35;
+  background: #dcefdc;
+  border: 1px solid #a8cda9;
+}
+
+.activity-enrollment-status--closed {
+  color: #9a3412;
+  background: #ffeadf;
+  border: 1px solid #f4b49a;
+}

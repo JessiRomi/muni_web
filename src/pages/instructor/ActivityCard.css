@@ -678,9 +678,6 @@
   border-top: 1px solid rgba(218, 208, 174, 0.14);
 }
 
-.instructor-view-attendance {
-  width: 100%;
-}
 
 .instructor-meeting-summary-button:focus-visible {
   outline: 2px solid #ffd16a;

@@ -110,13 +110,6 @@
   padding: 0;
 }
 
-.instructor-section > .instructor-activity-card {
-  width: 100%;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-}
-
 @media (max-width: 1100px) {
   .instructor-section:has(.instructor-activity-card) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -182,33 +175,6 @@
 
 .instructor-section > .meeting-form {
   grid-column: 1 / -1;
-}
-
-.instructor-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  overflow-y: auto;
-  background: rgb(0 0 0 / 68%);
-  backdrop-filter: blur(6px);
-}
-
-.instructor-modal-overlay .instructor-meeting-form {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: min(100%, 900px);
-  max-height: calc(100vh - 48px);
-  margin: auto;
-  overflow-y: auto;
-  border: 1px solid rgba(220, 174, 82, 0.4);
-  border-radius: 20px;
-  background: #232520;
-  box-shadow: 0 24px 70px rgb(0 0 0 / 40%);
 }
 
 /* Ajuste exclusivo del encabezado del instructor */

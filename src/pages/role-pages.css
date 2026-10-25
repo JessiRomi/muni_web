@@ -313,65 +313,6 @@
   gap: 20px;
 }
 
-.participant-catalog-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 18px;
-  min-width: 0;
-  padding: 26px;
-  background: #282a26;
-  border: 1px solid #484a42;
-  border-radius: 22px;
-  transition:
-    border-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.participant-catalog-card:hover {
-  border-color: #f5bd55;
-  transform: translateY(-2px);
-}
-
-.participant-catalog-icon {
-  display: grid;
-  place-items: center;
-  flex: 0 0 46px;
-  width: 46px;
-  height: 46px;
-  background: #35372f;
-  color: #f5bd55;
-  border-radius: 14px;
-}
-
-.participant-catalog-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.participant-catalog-label {
-  display: block;
-  margin-bottom: 10px;
-  color: #f5bd55;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-}
-
-.participant-catalog-card h3 {
-  margin: 0 0 12px;
-  font-size: 1.25rem;
-  line-height: 1.35;
-  overflow-wrap: anywhere;
-}
-
-.participant-catalog-card p {
-  margin: 0 0 12px;
-  color: #d1d0c7;
-  line-height: 1.65;
-  overflow-wrap: anywhere;
-  white-space: pre-line;
-}
-
 /* Accesibilidad */
 .participant-card button:focus-visible,
 .instructor-card button:focus-visible,
@@ -425,19 +366,7 @@
   .participant-discover {
     margin-top: 48px;
   }
-  .participant-catalog-card {
-    gap: 14px;
-    padding: 20px;
-    border-radius: 18px;
-  }
-  .participant-catalog-icon {
-    flex-basis: 40px;
-    width: 40px;
-    height: 40px;
-  }
-  .participant-catalog-card h3 {
-    font-size: 1.15rem;
-  }
+
   .participant-card span + .participant-logout {
     margin-left: 16px;
   }
@@ -451,7 +380,6 @@
 @media (prefers-reduced-motion: reduce) {
   .participant-refresh,
   .participant-action,
-  .participant-catalog-card,
   .role-selector-card {
     transition: none;
   }
@@ -491,20 +419,6 @@
   flex-wrap: wrap;
   gap: 8px;
   margin: 0 0 10px;
-}
-
-.participant-activity-card .participant-activity-label {
-  display: block;
-  margin-bottom: 8px;
-  color: #f5bd55;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-}
-
-.participant-activity-card.dashboard-activity:hover {
-  border-color: rgba(245, 189, 85, 0.4);
-  transform: translateY(-3px);
 }
 
 .participant-activity-card .participant-activity-label {
