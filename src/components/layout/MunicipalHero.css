@@ -1,0 +1,113 @@
+.municipal-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100vw;
+  min-height: 270px;
+  margin-left: calc(50% - 50vw);
+  padding: 48px max(40px, calc((100vw - 1380px) / 2)) 66px;
+  overflow: hidden;
+  color: #f5f2e9;
+  background-color: #29251e;
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(13, 16, 14, 0.9) 0%,
+      rgba(13, 16, 14, 0.58) 45%,
+      rgba(13, 16, 14, 0.08) 100%
+    ),
+    linear-gradient(0deg, rgba(20, 23, 20, 0.48), transparent 45%),
+    url("/images/cipolletti-fondo.png");
+  background-position:
+    center,
+    center,
+    center 54%;
+  background-size: cover;
+  border-bottom: 1px solid rgba(244, 181, 68, 0.2);
+}
+
+.municipal-hero::after {
+  position: absolute;
+  z-index: -1;
+  right: -80px;
+  bottom: -170px;
+  width: 360px;
+  height: 360px;
+  border: 1px solid rgba(244, 181, 68, 0.4);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 24px rgba(244, 181, 68, 0.04),
+    0 0 0 52px rgba(232, 135, 50, 0.035);
+  content: "";
+  pointer-events: none;
+}
+
+.municipal-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #f4b544;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2.1px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.municipal-hero h1 {
+  max-width: 850px;
+  margin: 14px 0 10px;
+  color: #fff8e9;
+  font-size: clamp(34px, 5vw, 58px);
+  font-weight: 750;
+  letter-spacing: -1.8px;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+  text-shadow: 0 3px 25px rgba(0, 0, 0, 0.25);
+}
+
+.municipal-hero > p {
+  max-width: 650px;
+  margin: 0;
+  color: #f0eee6;
+  font-size: 16px;
+  line-height: 1.65;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 900px) {
+  .municipal-hero {
+    min-height: 245px;
+    padding: 40px 24px 54px;
+  }
+}
+
+@media (max-width: 600px) {
+  .municipal-hero {
+    min-height: 230px;
+    padding: 34px 18px 48px;
+    background-position:
+      center,
+      center,
+      58% center;
+  }
+
+  .municipal-hero h1 {
+    font-size: clamp(32px, 9vw, 43px);
+    letter-spacing: -1px;
+  }
+
+  .municipal-hero > p {
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .municipal-hero::after {
+    scroll-behavior: auto;
+  }
+}

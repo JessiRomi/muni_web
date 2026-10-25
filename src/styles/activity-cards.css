@@ -1,0 +1,218 @@
+/* Base visual compartida de las tarjetas de actividades */
+.dashboard-activity {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  color: #f5f2e9;
+  background: linear-gradient(145deg, #262923, #1c201c);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.dashboard-activity::before {
+  display: none;
+}
+
+.dashboard-activity:hover {
+  transform: translateY(-3px);
+  border-color: rgba(245, 189, 85, 0.4);
+}
+
+.dashboard-activity-cover {
+  position: relative;
+  flex: 0 0 100px;
+  height: 100px;
+  min-height: 100px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #51432c, #242821);
+}
+
+.dashboard-activity-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 350ms ease;
+}
+
+.dashboard-activity:hover .dashboard-activity-cover img {
+  transform: scale(1.04);
+}
+
+.dashboard-activity-status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  max-width: calc(100% - 24px);
+  padding: 6px 12px;
+  color: #10251a;
+  background: #79e6b1;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-activity-status.is-finished {
+  color: #202020;
+  background: #dededb;
+}
+
+.dashboard-activity-content {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  padding: 12px;
+}
+
+.dashboard-activity-icon {
+  display: none;
+}
+
+.dashboard-activity-category {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 10px;
+  color: var(--dashboard-amber, #f5bd55);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.dashboard-activity-category-icon {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  place-items: center;
+  color: #211b10;
+  background: linear-gradient(135deg, #ffd16a, #e99536);
+  border-radius: 50%;
+}
+
+.dashboard-activity h3 {
+  margin: 0 0 8px;
+  color: #fff7e7;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-activity p {
+  margin: 0 0 10px;
+  color: #c1c2b7;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-activity-description {
+  min-height: 0;
+}
+
+.dashboard-activity-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 4px 0 !important;
+  color: #bfc0b5 !important;
+  font-size: 11px !important;
+  line-height: 1.5 !important;
+}
+
+.dashboard-activity-detail svg {
+  flex: 0 0 16px;
+  margin-top: 1px;
+  color: var(--dashboard-amber, #f5bd55);
+}
+
+.dashboard-activity-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.dashboard-activity-statuses .activity-enrollment-status {
+  margin: 0;
+}
+
+
+/* Acciones compartidas entre administrador e instructor */
+.dashboard-activity-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 7px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.dashboard-activity-actions .dashboard-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+.dashboard-activity-actions .dashboard-button--danger {
+  grid-column: 1 / -1;
+}
+
+.dashboard-activity-actions .dashboard-button svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .dashboard-activity-actions .dashboard-button {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-activity-cover {
+    flex-basis: 120px;
+    height: 120px;
+    min-height: 120px;
+  }
+
+  .dashboard-activity-content {
+    padding: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-activity,
+  .dashboard-activity-cover img {
+    transition: none;
+  }
+}

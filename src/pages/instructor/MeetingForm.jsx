@@ -59,26 +59,13 @@ export default function MeetingForm({ activity, onCreated, onCancel }) {
     }
   }
 
+  
   return (
-    <section className="instructor-meeting-form">
-      <header className="instructor-meeting-form-header">
-        <div>
-          <span className="instructor-eyebrow">NUEVO ENCUENTRO</span>
-          <h3>{activity.name}</h3>
-        </div>
-
-        <button
-          className="instructor-meeting-close"
-          type="button"
-          onClick={onCancel}
-          disabled={saving}
-          aria-label="Cerrar formulario"
-        >
-          <X size={22} />
-        </button>
-      </header>
-
-      <form onSubmit={handleSubmit}>
+    <form
+      className="activity-form instructor-meeting-fields"
+      onSubmit={handleSubmit}
+    >
+      <div className="activity-form-field activity-form-field--full">
         <label htmlFor="meeting-date">Fecha y hora *</label>
         <input
           id="meeting-date"
@@ -89,7 +76,9 @@ export default function MeetingForm({ activity, onCreated, onCancel }) {
           required
           disabled={saving}
         />
+      </div>
 
+      <div className="activity-form-field activity-form-field--full">
         <label htmlFor="meeting-location">Ubicación *</label>
         <input
           id="meeting-location"
@@ -100,7 +89,9 @@ export default function MeetingForm({ activity, onCreated, onCancel }) {
           required
           disabled={saving}
         />
+      </div>
 
+      <div className="activity-form-field">
         <label htmlFor="meeting-latitude">Latitud *</label>
         <input
           id="meeting-latitude"
@@ -114,7 +105,9 @@ export default function MeetingForm({ activity, onCreated, onCancel }) {
           required
           disabled={saving}
         />
+      </div>
 
+      <div className="activity-form-field">
         <label htmlFor="meeting-longitude">Longitud *</label>
         <input
           id="meeting-longitude"
@@ -128,8 +121,12 @@ export default function MeetingForm({ activity, onCreated, onCancel }) {
           required
           disabled={saving}
         />
+      </div>
 
-        <label htmlFor="meeting-radius">Radio permitido en metros *</label>
+      <div className="activity-form-field activity-form-field--full">
+        <label htmlFor="meeting-radius">
+          Radio permitido en metros *
+        </label>
         <input
           id="meeting-radius"
           name="allowedRadius"
@@ -141,23 +138,33 @@ export default function MeetingForm({ activity, onCreated, onCancel }) {
           required
           disabled={saving}
         />
+      </div>
 
-        {error && (
-          <p className="instructor-meeting-error" role="alert">
-            {error}
-          </p>
-        )}
+      {error && (
+        <p className="activity-form-error" role="alert">
+          {error}
+        </p>
+      )}
 
-        <div className="instructor-meeting-actions">
-          <button type="submit" disabled={saving}>
-            {saving ? "Guardando..." : "Guardar encuentro"}
-          </button>
+      <div className="activity-form-actions">
+        <button
+          className="activity-form-button activity-form-button--secondary"
+          type="button"
+          onClick={onCancel}
+          disabled={saving}
+        >
+          <X size={17} />
+          Cancelar
+        </button>
 
-          <button type="button" onClick={onCancel} disabled={saving}>
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </section>
+        <button
+          className="activity-form-button activity-form-button--primary"
+          type="submit"
+          disabled={saving}
+        >
+          {saving ? "Guardando..." : "Guardar encuentro"}
+        </button>
+      </div>
+    </form>
   );
 }

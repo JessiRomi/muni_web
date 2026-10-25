@@ -1,6 +1,6 @@
 import { CalendarDays, Compass, RefreshCw } from "lucide-react";
 import { formatDate } from "../participantUtils";
-
+import { getActivityVisual } from "../../../utils/activityVisuals";
 function getEnrollmentState(activity, now = Date.now()) {
   const start = new Date(activity.enrollmentStart).getTime();
   const end = new Date(activity.enrollmentEnd).getTime();
@@ -96,23 +96,42 @@ export default function ActivityCatalog({
         <div className="participant-catalog">
           {activities.map((activity) => {
             const state = getEnrollmentState(activity);
+            const visual = getActivityVisual(activity);
 
             return (
-              <article className="participant-catalog-card" key={activity.id}>
-                <div className="participant-catalog-icon">
-                  <CalendarDays size={24} />
+              <article className="dashboard-activity" key={activity.id}>
+                <div className="dashboard-activity-cover">
+                  <img
+                    src={visual.image}
+                    alt=""
+                    loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.style.visibility = "hidden";
+                    }}
+                  />
+
+                  <span
+                    className={`dashboard-activity-status ${
+                      state.canEnroll ? "is-active" : "is-finished"
+                    }`}
+                  >
+                    {state.canEnroll ? "Inscripción abierta" : "No disponible"}
+                  </span>
                 </div>
 
-                <div className="participant-catalog-content">
-                  <span className="participant-catalog-label">
-                    TALLER DISPONIBLE
+                <div className="dashboard-activity-content">
+                  <span className="dashboard-activity-category">
+                    <span className="dashboard-activity-category-icon">
+                      <CalendarDays size={15} aria-hidden="true" />
+                    </span>
+                    {visual.label}
                   </span>
 
                   <h3>{activity.name || "Actividad sin nombre"}</h3>
 
-                  <p>
+                  <p className="dashboard-activity-description">
                     {activity.description ||
-                      "Conoce esta propuesta de la comunidad."}
+                      "Conocé esta propuesta de la comunidad."}
                   </p>
 
                   <p>
@@ -127,14 +146,16 @@ export default function ActivityCatalog({
 
                   <p>{state.label}</p>
 
-                  <button
-                    className="participant-action"
-                    type="button"
-                    onClick={() => onSelectActivity(activity)}
-                    disabled={!state.canEnroll}
-                  >
-                    {state.buttonLabel}
-                  </button>
+                  <div className="dashboard-activity-actions">
+                    <button
+                      className="dashboard-button dashboard-button--secondary"
+                      type="button"
+                      onClick={() => onSelectActivity(activity)}
+                      disabled={!state.canEnroll}
+                    >
+                      {state.buttonLabel}
+                    </button>
+                  </div>
                 </div>
               </article>
             );

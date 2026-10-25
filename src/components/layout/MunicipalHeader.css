@@ -1,0 +1,105 @@
+.municipal-header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px clamp(24px, 5vw, 76px);
+  color: #f5f2e9;
+  background: rgba(20, 22, 19, 0.88);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+}
+
+.municipal-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.municipal-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  color: #191b16;
+  background: linear-gradient(145deg, #ffd16a, #e99536);
+  border-radius: 12px;
+  box-shadow: 0 5px 24px rgba(231, 151, 48, 0.15);
+}
+
+.municipal-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.municipal-brand-copy strong {
+  color: #fff8e9;
+  font-size: 15px;
+  letter-spacing: 1.8px;
+  overflow-wrap: anywhere;
+}
+
+.municipal-brand-copy span {
+  color: #b6b7ac;
+  font-size: 12px;
+}
+
+.municipal-header-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 43px;
+  padding: 11px 16px;
+  color: #e6e5dc;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(226, 177, 86, 0.34);
+  border-radius: 7px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.municipal-header-logout:hover {
+  color: #ffd16a;
+  background: rgba(244, 181, 68, 0.08);
+  border-color: rgba(244, 181, 68, 0.75);
+}
+
+.municipal-header-logout:focus-visible {
+  outline: 2px solid #ffd16a;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .municipal-header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 18px 20px;
+  }
+
+  .municipal-brand-mark {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+
+  .municipal-brand-copy strong {
+    font-size: 15px;
+  }
+
+  .municipal-brand-copy span {
+    font-size: 12px;
+  }
+}

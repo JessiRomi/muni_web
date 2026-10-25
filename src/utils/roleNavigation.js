@@ -1,16 +1,27 @@
 const ROLE_ROUTES = {
   ADMINISTRADOR: "/panel",
-  PARTICIPANTE: "/participante",
   INSTRUCTOR: "/instructor",
+  PARTICIPANTE: "/participante",
 };
 
 export function getRoleDestination(roles = []) {
-  const availableRoles = [...new Set(roles)].filter((role) =>
-    Object.hasOwn(ROLE_ROUTES, role),
+  const availableRoles = new Set(
+    Array.isArray(roles) ? roles.filter((role) => role in ROLE_ROUTES) : [],
   );
-  if (availableRoles.length === 0) return "/";
-  if (availableRoles.length > 1) return "/elegir-rol";
-  return ROLE_ROUTES[availableRoles[0]];
+
+  if (availableRoles.has("ADMINISTRADOR")) {
+    return ROLE_ROUTES.ADMINISTRADOR;
+  }
+
+  if (availableRoles.has("INSTRUCTOR")) {
+    return ROLE_ROUTES.INSTRUCTOR;
+  }
+
+  if (availableRoles.has("PARTICIPANTE")) {
+    return ROLE_ROUTES.PARTICIPANTE;
+  }
+
+  return "/";
 }
 
 export function getRoleRoute(role) {

@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
-import { CalendarDays, MapPin } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronDown,
+  ChevronUp,
+  Clock3,
+  Users,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import attendanceService from "../../services/attendanceService";
+import { getActivityVisual } from "../../utils/activityVisuals";
+import "../../styles/meeting-cards.css";
 import "./ActivityCard.css";
 
 const activityStatuses = {
@@ -36,6 +44,7 @@ function formatDate(value) {
     hour12: false,
   });
 }
+
 function getEnrollmentState(activity, now = Date.now()) {
   const start = new Date(activity.enrollmentStart).getTime();
   const end = new Date(activity.enrollmentEnd).getTime();
@@ -47,30 +56,18 @@ function getEnrollmentState(activity, now = Date.now()) {
     !Number.isFinite(end) ||
     end <= start
   ) {
-    return {
-      label: "Fechas no disponibles",
-      kind: "unknown",
-    };
+    return { label: "Fechas no disponibles", kind: "unknown" };
   }
 
   if (now < start) {
-    return {
-      label: "Inscripción pendiente",
-      kind: "pending",
-    };
+    return { label: "Inscripción pendiente", kind: "pending" };
   }
 
   if (now > end) {
-    return {
-      label: "Inscripción vencida",
-      kind: "expired",
-    };
+    return { label: "Inscripción vencida", kind: "expired" };
   }
 
-  return {
-    label: "Inscripción abierta",
-    kind: "open",
-  };
+  return { label: "Inscripción abierta", kind: "open" };
 }
 
 function getSessionState(session, now) {
@@ -175,7 +172,9 @@ function AttendanceStatus({ meetingId }) {
   }
 
   if (loading) {
-    return <p>Consultando asistencia...</p>;
+    return (
+      <p className="instructor-attendance-loading">Consultando asistencia...</p>
+    );
   }
 
   const state = session ? getSessionState(session, now) : null;
@@ -184,14 +183,14 @@ function AttendanceStatus({ meetingId }) {
 
   return (
     <section className="instructor-attendance-status" aria-label="Asistencia">
-      <p className="instructor-attendance-heading">
+      <div className="instructor-attendance-heading">
         <strong>Asistencia</strong>
         <span
           className={`attendance-state attendance-state--${state?.kind || "none"}`}
         >
           {state?.label || "Sin sesión"}
         </span>
-      </p>
+      </div>
 
       {session && (
         <dl className="instructor-attendance-details">
@@ -218,6 +217,7 @@ function AttendanceStatus({ meetingId }) {
           {error}
         </p>
       )}
+
       {notice && (
         <p className="attendance-feedback" role="status">
           {notice}
@@ -264,96 +264,188 @@ function AttendanceStatus({ meetingId }) {
 
 export default function ActivityCard({ activity, onCreateMeeting }) {
   const navigate = useNavigate();
+  const [meetingsExpanded, setMeetingsExpanded] = useState(false);
+  const [expandedMeetingId, setExpandedMeetingId] = useState(null);
+
   const meetings = Array.isArray(activity.meetings) ? activity.meetings : [];
+  const visual = getActivityVisual(activity);
+  const enrollment = getEnrollmentState(activity);
+  const isFinished = activity.status === "COMPLETED";
 
   return (
-    <article className="instructor-card instructor-activity-card">
-      <CalendarDays
-        className="instructor-activity-icon"
-        size={26}
-        aria-hidden="true"
-      />
+    <article className="dashboard-activity instructor-activity-card">
+      <div className="dashboard-activity-cover">
+        <img
+          src={visual.image}
+          alt=""
+          loading="lazy"
+          onError={(event) => {
+            event.currentTarget.style.visibility = "hidden";
+          }}
+        />
 
-      <div className="instructor-activity-content">
+        <span
+          className={`dashboard-activity-status ${
+            isFinished ? "is-finished" : "is-active"
+          }`}
+        >
+          {isFinished ? "Finalizada" : "Activa"}
+        </span>
+      </div>
+
+      <div className="dashboard-activity-content">
+        <span className="dashboard-activity-category">
+          <span className="dashboard-activity-category-icon">
+            <CalendarDays size={15} aria-hidden="true" />
+          </span>
+          {visual.label}
+        </span>
+
         <h3>{activity.name || "Actividad sin nombre"}</h3>
 
-        <p>{activity.description || "Sin descripción disponible."}</p>
-
-        <p>
-          <strong>Estado:</strong>{" "}
-          {activityStatuses[activity.status] || activity.status || "Sin estado"}
+        <p className="dashboard-activity-description">
+          {activity.description || "Sin descripción disponible."}
         </p>
 
-        <p>
-          <strong>Capacidad:</strong> {activity.capacity ?? "No definida"}
+        <p className="dashboard-activity-detail">
+          <Users size={16} aria-hidden="true" />
+          <span>Capacidad: {activity.capacity ?? "No definida"}</span>
         </p>
 
-        <p>
-          <strong>Inicio de inscripción:</strong>{" "}
-          {formatDate(activity.enrollmentStart)}
+        <p className="dashboard-activity-detail">
+          <Clock3 size={16} aria-hidden="true" />
+          <span>Inicio: {formatDate(activity.enrollmentStart)}</span>
         </p>
 
-        <p>
-          <strong>Fin de inscripción:</strong>{" "}
-          {formatDate(activity.enrollmentEnd)}
+        <p className="dashboard-activity-detail">
+          <CalendarDays size={16} aria-hidden="true" />
+          <span>Fin: {formatDate(activity.enrollmentEnd)}</span>
         </p>
 
-        <p>
-          <strong>Estado de inscripción:</strong>{" "}
-          {getEnrollmentState(activity).label}
-        </p>
-
-        <p>
-          <strong>Encuentros:</strong> {meetings.length}
-        </p>
-
-        <div className="instructor-meetings-list">
-          {meetings.map((meeting) => (
-            <div className="instructor-meeting-item" key={meeting.id}>
-              <p>
-                <strong>Fecha:</strong> {formatDate(meeting.dateTime)}
-              </p>
-
-              <p className="instructor-meeting-location">
-                <MapPin size={16} aria-hidden="true" />
-                {meeting.location || "Sin ubicación"}
-              </p>
-
-              <span>
-                {meetingStatuses[meeting.status] ||
-                  meeting.status ||
-                  "Programado"}
-              </span>
-
-              <AttendanceStatus meetingId={meeting.id} />
-
-              <button
-                className="attendance-button"
-                type="button"
-                onClick={() =>
-                  navigate(`/instructor/encuentros/${meeting.id}/asistencia`, {
-                    state: {
-                      meeting,
-                      activityId: activity.id,
-                      activityName: activity.name,
-                      enrollments: activity.enrollments || [],
-                    },
-                  })
-                }
-              >
-                Ver asistencia
-              </button>
-            </div>
-          ))}
+        <div className="dashboard-activity-statuses">
+          <span
+            className={`activity-enrollment-status ${
+              enrollment.kind === "open"
+                ? "activity-enrollment-status--open"
+                : enrollment.kind === "pending"
+                  ? "activity-enrollment-status--pending"
+                  : enrollment.kind === "expired"
+                    ? "activity-enrollment-status--expired"
+                    : "activity-enrollment-status--unknown"
+            }`}
+          >
+            {enrollment.label}
+          </span>
         </div>
 
-        <button
-          className="instructor-logout"
-          type="button"
-          onClick={() => onCreateMeeting(activity)}
-        >
-          Crear encuentro
-        </button>
+        <div className="instructor-activity-meetings-toggle">
+          <button
+            type="button"
+            className="instructor-meetings-toggle"
+            aria-expanded={meetingsExpanded}
+            onClick={() => setMeetingsExpanded((expanded) => !expanded)}
+          >
+            <span>
+              {meetings.length}{" "}
+              {meetings.length === 1 ? "encuentro" : "encuentros"}
+            </span>
+            {meetingsExpanded ? (
+              <ChevronUp size={19} aria-hidden="true" />
+            ) : (
+              <ChevronDown size={19} aria-hidden="true" />
+            )}
+          </button>
+        </div>
+
+        {meetingsExpanded && (
+          <div className="instructor-meetings-list">
+            {meetings.length === 0 ? (
+              <p className="instructor-meetings-empty">
+                Todavía no hay encuentros programados.
+              </p>
+            ) : (
+              meetings.map((meeting) => (
+                <div
+                  className="shared-meeting-card instructor-meeting-item"
+                  key={meeting.id}
+                >
+                  <button
+                    type="button"
+                    className="instructor-meeting-summary-button"
+                    aria-expanded={expandedMeetingId === meeting.id}
+                    onClick={() =>
+                      setExpandedMeetingId((current) =>
+                        current === meeting.id ? null : meeting.id,
+                      )
+                    }
+                  >
+                    <span className="instructor-meeting-summary">
+                      <span>
+                        <CalendarDays size={16} aria-hidden="true" />
+                        <span>
+                          <strong>{formatDate(meeting.dateTime)}</strong>
+                          {meeting.location || "Sin ubicación"}
+                        </span>
+                      </span>
+
+                      <span
+                        className={`instructor-meeting-status instructor-meeting-status--${String(
+                          meeting.status || "scheduled",
+                        ).toLowerCase()}`}
+                      >
+                        {meetingStatuses[meeting.status] ||
+                          meeting.status ||
+                          "Programado"}
+                      </span>
+                    </span>
+
+                    {expandedMeetingId === meeting.id ? (
+                      <ChevronUp size={19} aria-hidden="true" />
+                    ) : (
+                      <ChevronDown size={19} aria-hidden="true" />
+                    )}
+                  </button>
+
+                  {expandedMeetingId === meeting.id && (
+                    <div className="instructor-meeting-details">
+                      <AttendanceStatus meetingId={meeting.id} />
+
+                      <button
+                        className="dashboard-button dashboard-button--secondary instructor-view-attendance"
+                        type="button"
+                        onClick={() =>
+                          navigate(
+                            `/instructor/encuentros/${meeting.id}/asistencia`,
+                            {
+                              state: {
+                                meeting,
+                                activityId: activity.id,
+                                activityName: activity.name,
+                                enrollments: activity.enrollments || [],
+                              },
+                            },
+                          )
+                        }
+                      >
+                        Ver asistencia
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        <div className="dashboard-activity-actions instructor-activity-actions">
+          <button
+            className="dashboard-button dashboard-button--secondary"
+            type="button"
+            onClick={() => onCreateMeeting(activity)}
+          >
+            Crear encuentro
+          </button>
+        </div>
       </div>
     </article>
   );

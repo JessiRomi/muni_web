@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { LoaderCircle, Save, Plus, X } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
 import activitiesService from "../../../services/activitiesService";
 import usersService from "../../../services/usersService";
@@ -28,7 +29,7 @@ function toDateTimeLocal(value) {
 }
 
 function getActivityForm(activity) {
-  if (!activity) return initialForm;
+  if (!activity) return { ...initialForm };
 
   return {
     name: activity.name ?? "",
@@ -45,6 +46,7 @@ export default function ActivityForm({
   onCreated,
   onUpdated,
   onCancel,
+  modal = false,
 }) {
   const { user } = useAuth();
   const isEditing = activity !== null;
@@ -133,14 +135,16 @@ export default function ActivityForm({
         onUpdated?.(updated);
       } else {
         const created = await activitiesService.create(data);
-        setForm(initialForm);
+        setForm({ ...initialForm });
         setSuccess("La actividad se creó correctamente.");
         onCreated?.(created);
       }
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          `No se pudo ${isEditing ? "actualizar" : "crear"} la actividad. Verificá los datos e intentá nuevamente.`,
+          `No se pudo ${
+            isEditing ? "actualizar" : "crear"
+          } la actividad. Verificá los datos e intentá nuevamente.`,
       );
     } finally {
       setSaving(false);
@@ -148,97 +152,120 @@ export default function ActivityForm({
   }
 
   return (
-    <section className="activity-form-section">
-      <h2>{isEditing ? "Editar actividad" : "Nueva actividad"}</h2>
-
-      <p>
-        {isEditing
-          ? "Modificá los datos de la actividad."
-          : "Completá los datos para registrar una actividad."}
-      </p>
+    <section
+      className={`activity-form-section${
+        modal ? " activity-form-section--modal" : ""
+      }`}
+    >
+      {!modal && (
+        <>
+          <h2>{isEditing ? "Editar actividad" : "Nueva actividad"}</h2>
+          <p>
+            {isEditing
+              ? "Modificá los datos de la actividad."
+              : "Completá los datos para registrar una actividad."}
+          </p>
+        </>
+      )}
 
       <form className="activity-form" onSubmit={handleSubmit}>
-        <label htmlFor="activity-name">Nombre *</label>
-        <input
-          id="activity-name"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          maxLength={150}
-          required
-          disabled={saving}
-        />
+        <div className="activity-form-field activity-form-field--full">
+          <label htmlFor="activity-name">Nombre *</label>
+          <input
+            id="activity-name"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            maxLength={150}
+            required
+            disabled={saving}
+            autoFocus={modal}
+          />
+        </div>
 
-        <label htmlFor="activity-description">Descripción</label>
-        <textarea
-          id="activity-description"
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          rows={3}
-          disabled={saving}
-        />
+        <div className="activity-form-field activity-form-field--full">
+          <label htmlFor="activity-description">Descripción</label>
+          <textarea
+            id="activity-description"
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            rows={2}
+            disabled={saving}
+          />
+        </div>
 
-        <label htmlFor="activity-capacity">Capacidad *</label>
-        <input
-          id="activity-capacity"
-          name="capacity"
-          type="number"
-          min="1"
-          step="1"
-          value={form.capacity}
-          onChange={handleChange}
-          required
-          disabled={saving}
-        />
+        <div className="activity-form-field">
+          <label htmlFor="activity-capacity">Capacidad *</label>
+          <input
+            id="activity-capacity"
+            name="capacity"
+            type="number"
+            min="1"
+            step="1"
+            value={form.capacity}
+            onChange={handleChange}
+            required
+            disabled={saving}
+          />
+        </div>
 
-        <label htmlFor="activity-start">Inicio de inscripción *</label>
-        <input
-          id="activity-start"
-          name="enrollmentStart"
-          type="datetime-local"
-          value={form.enrollmentStart}
-          onChange={handleChange}
-          required
-          disabled={saving}
-        />
+        <div className="activity-form-field">
+          <label htmlFor="activity-start">Inicio de inscripción *</label>
+          <input
+            id="activity-start"
+            name="enrollmentStart"
+            type="datetime-local"
+            value={form.enrollmentStart}
+            onChange={handleChange}
+            required
+            disabled={saving}
+          />
+        </div>
 
-        <label htmlFor="activity-end">Fin de inscripción *</label>
-        <input
-          id="activity-end"
-          name="enrollmentEnd"
-          type="datetime-local"
-          value={form.enrollmentEnd}
-          onChange={handleChange}
-          min={form.enrollmentStart || undefined}
-          required
-          disabled={saving}
-        />
+        <div className="activity-form-field">
+          <label htmlFor="activity-end">Fin de inscripción *</label>
+          <input
+            id="activity-end"
+            name="enrollmentEnd"
+            type="datetime-local"
+            value={form.enrollmentEnd}
+            onChange={handleChange}
+            min={form.enrollmentStart || undefined}
+            required
+            disabled={saving}
+          />
+        </div>
 
-        <label htmlFor="activity-responsible">Instructor responsable *</label>
-        <select
-          id="activity-responsible"
-          name="responsibleId"
-          value={form.responsibleId}
-          onChange={handleChange}
-          required
-          disabled={saving || loadingUsers}
-        >
-          <option value="">
-            {loadingUsers
-              ? "Cargando instructores..."
-              : "Seleccioná un instructor"}
-          </option>
-
-          {instructors.map((instructor) => (
-            <option key={instructor.id} value={instructor.id}>
-              {instructor.firstName} {instructor.lastName} — {instructor.email}
+        <div className="activity-form-field activity-form-field--full">
+          <label htmlFor="activity-responsible">Instructor responsable *</label>
+          <select
+            id="activity-responsible"
+            name="responsibleId"
+            value={form.responsibleId}
+            onChange={handleChange}
+            required
+            disabled={saving || loadingUsers}
+          >
+            <option value="">
+              {loadingUsers
+                ? "Cargando instructores..."
+                : "Seleccioná un instructor"}
             </option>
-          ))}
-        </select>
+
+            {instructors.map((instructor) => (
+              <option key={instructor.id} value={instructor.id}>
+                {instructor.firstName} {instructor.lastName} —{" "}
+                {instructor.email}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {instructors.length === 0 && !loadingUsers && (
-          <p>No se encontraron instructores activos.</p>
+          <p className="activity-form-info">
+            No se encontraron instructores activos.
+          </p>
         )}
 
         {error && (
@@ -255,15 +282,29 @@ export default function ActivityForm({
 
         <div className="activity-form-actions">
           {onCancel && (
-            <button type="button" onClick={onCancel} disabled={saving}>
+            <button
+              className="activity-form-button activity-form-button--secondary"
+              type="button"
+              onClick={onCancel}
+              disabled={saving}
+            >
+              <X size={17} />
               Cancelar
             </button>
           )}
 
           <button
+            className="activity-form-button activity-form-button--primary"
             type="submit"
             disabled={saving || loadingUsers || instructors.length === 0}
           >
+            {saving ? (
+              <LoaderCircle className="dashboard-icon-spinning" size={17} />
+            ) : isEditing ? (
+              <Save size={17} />
+            ) : (
+              <Plus size={17} />
+            )}
             {saving
               ? "Guardando..."
               : isEditing

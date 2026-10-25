@@ -1,6 +1,25 @@
-import { CalendarDays, RefreshCw, MapPin } from "lucide-react";
+import { useState } from "react";
+import {
+  CalendarDays,
+  RefreshCw,
+  MapPin,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import AttendanceMeeting from "./AttendanceMeeting";
 import { formatDate } from "../participantUtils";
+import { getActivityVisual } from "../../../utils/activityVisuals";
+import "../../../styles/dashboard-section-heading.css";
+import "../../../styles/meeting-cards.css";
+
+const meetingStatuses = {
+  SCHEDULED: "Programado",
+  ACTIVE: "Activo",
+  OPEN: "Abierto",
+  CLOSED: "Cerrado",
+  COMPLETED: "Finalizado",
+  CANCELLED: "Cancelado",
+};
 
 export default function MyEnrollments({
   enrollments,
@@ -14,23 +33,30 @@ export default function MyEnrollments({
   withdrawingId,
   handleWithdraw,
 }) {
+  const [expandedMeetingIds, setExpandedMeetingIds] = useState([]);
   return (
     <section className="participant-section">
-      <div className="participant-section-heading">
+      <div className="dashboard-activities-heading">
         <div>
-          <span className="participant-eyebrow">MI ACTIVIDAD</span>
+          <span className="dashboard-eyebrow">MI ACTIVIDAD</span>
           <h2>Mis inscripciones</h2>
         </div>
 
-        <button
-          className="participant-refresh"
-          type="button"
-          onClick={refreshDashboard}
-          disabled={loading}
-        >
-          <RefreshCw size={16} />
-          Actualizar
-        </button>
+        <div className="dashboard-activities-header-actions">
+          <button
+            className="dashboard-button dashboard-button--secondary"
+            type="button"
+            onClick={refreshDashboard}
+            disabled={loading}
+          >
+            <RefreshCw
+              size={17}
+              aria-hidden="true"
+              className={loading ? "dashboard-icon-spinning" : ""}
+            />
+            Actualizar
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -70,9 +96,19 @@ export default function MyEnrollments({
       ) : (
         <div className="participant-enrollments">
           {enrollments.map((enrollment) => {
+            const activity = enrollment.activity || {};
+            const visual = getActivityVisual(activity);
             const meetings = Array.isArray(enrollment.activity?.meetings)
               ? enrollment.activity.meetings
               : [];
+            console.table(
+              meetings.map((meeting) => ({
+                id: meeting.id,
+                dateTime: meeting.dateTime,
+                location: meeting.location,
+                status: meeting.status,
+              })),
+            );
 
             const now = Date.now();
 
@@ -97,33 +133,40 @@ export default function MyEnrollments({
 
             return (
               <article
-                className="participant-activity-card"
+                className="dashboard-activity participant-activity-card"
                 key={enrollment.id}
               >
-                <div className="participant-activity-icon">
-                  <CalendarDays size={25} aria-hidden="true" />
+                <div className="dashboard-activity-cover">
+                  <img
+                    src={visual.image}
+                    alt=""
+                    loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.style.visibility = "hidden";
+                    }}
+                  />
+                  <span
+                    className={`dashboard-activity-status ${
+                      isActive ? "is-active" : "is-finished"
+                    }`}
+                  >
+                    {isActive ? "Inscripción activa" : "Inscripción finalizada"}
+                  </span>
                 </div>
 
-                <div className="participant-activity-content">
-                  <div className="participant-activity-heading">
-                    <div>
-                      <span className="participant-activity-label">
-                        MI ACTIVIDAD
-                      </span>
-
-                      <h3>
-                        {enrollment.activity?.name ||
-                          `Actividad #${enrollment.activityId}`}
-                      </h3>
-                    </div>
-
-                    <span
-                      className={`participant-status ${
-                        isActive ? "participant-status--active" : ""
-                      }`}
-                    >
-                      {enrollmentStatus[enrollment.status] || enrollment.status}
+                <div className="dashboard-activity-content participant-activity-content">
+                  <span className="dashboard-activity-category">
+                    <span className="dashboard-activity-category-icon">
+                      <CalendarDays size={15} aria-hidden="true" />
                     </span>
+                    {visual.label}
+                  </span>
+
+                  <div className="participant-activity-heading">
+                    <h3>
+                      {enrollment.activity?.name ||
+                        `Actividad #${enrollment.activityId}`}
+                    </h3>
                   </div>
 
                   <p className="participant-activity-description">
@@ -163,34 +206,79 @@ export default function MyEnrollments({
                         <details className="participant-attendance-details">
                           <summary>Consultar encuentros y asistencia</summary>
 
-                          <div className="participant-meetings">
+                          <div className="shared-meeting-list participant-meetings">
                             {meetings.map((meeting) => (
                               <div
-                                className="participant-meeting"
+                                className="shared-meeting-card participant-meeting"
                                 key={meeting.id}
                               >
-                                <p>
-                                  <strong>Fecha:</strong>{" "}
-                                  {formatDate(meeting.dateTime)}
-                                </p>
+                                <button
+                                  type="button"
+                                  className="shared-meeting-summary participant-meeting-summary"
+                                  aria-expanded={expandedMeetingIds.includes(
+                                    meeting.id,
+                                  )}
+                                  onClick={() =>
+                                    setExpandedMeetingIds((current) =>
+                                      current.includes(meeting.id)
+                                        ? current.filter(
+                                            (id) => id !== meeting.id,
+                                          )
+                                        : [...current, meeting.id],
+                                    )
+                                  }
+                                >
+                                  <span className="shared-meeting-info">
+                                    <CalendarDays
+                                      size={18}
+                                      aria-hidden="true"
+                                    />
 
-                                <p>
-                                  <strong>Lugar:</strong>{" "}
-                                  {meeting.location || "Lugar a confirmar"}
-                                </p>
+                                    <span className="shared-meeting-info-text">
+                                      <strong>
+                                        {formatDate(meeting.dateTime)}
+                                      </strong>
+                                      <span>
+                                        {meeting.location ||
+                                          "Lugar a confirmar"}
+                                      </span>
+                                    </span>
+                                  </span>
 
-                                <AttendanceMeeting
-                                  meeting={meeting}
-                                  participantId={user?.id}
-                                  attendanceHistory={attendanceHistory}
-                                  onAttendanceUpdated={loadAttendanceHistory}
-                                />
+                                  <span
+                                    className={`shared-meeting-status shared-meeting-status--${String(
+                                      meeting.status || "scheduled",
+                                    ).toLowerCase()}`}
+                                  >
+                                    {meetingStatuses[meeting.status] ||
+                                      meeting.status ||
+                                      "Programado"}
+                                  </span>
+
+                                  {expandedMeetingIds.includes(meeting.id) ? (
+                                    <ChevronUp size={19} aria-hidden="true" />
+                                  ) : (
+                                    <ChevronDown size={19} aria-hidden="true" />
+                                  )}
+                                </button>
+
+                                {expandedMeetingIds.includes(meeting.id) && (
+                                  <div className="shared-meeting-details">
+                                    <AttendanceMeeting
+                                      meeting={meeting}
+                                      participantId={user?.id}
+                                      attendanceHistory={attendanceHistory}
+                                      onAttendanceUpdated={
+                                        loadAttendanceHistory
+                                      }
+                                    />
+                                  </div>
+                                )}
                               </div>
                             ))}
                           </div>
                         </details>
                       )}
-
                       <button
                         className="participant-withdraw-button"
                         type="button"

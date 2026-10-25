@@ -1,126 +1,357 @@
+/* Tarjeta de actividad del instructor */
 .instructor-activity-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   width: 100%;
   min-width: 0;
   height: 100%;
-  box-sizing: border-box;
   margin: 0;
-  padding: 24px;
-  gap: 18px;
-  border-radius: 20px;
-  align-items: flex-start;
+  padding: 0;
+  overflow: hidden;
+  color: #f5f2e9;
+  background: linear-gradient(155deg, #242721, #1d201c);
+  border: 1px solid rgba(218, 208, 174, 0.17);
+  border-radius: 17px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
   transition:
-    border-color 0.2s ease,
-    transform 0.2s ease;
+    border-color 180ms ease,
+    transform 180ms ease;
 }
 
 .instructor-activity-card:hover {
-  border-color: #77715d;
+  border-color: rgba(245, 189, 85, 0.45);
+  transform: translateY(-2px);
 }
 
-.instructor-activity-icon {
-  flex-shrink: 0;
-  color: #f5bd55;
-  margin-top: 3px;
+.instructor-page .instructor-activity-card .dashboard-activity-content h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  line-height: 1.35;
+}
+/* Cabecera */
+
+.instructor-activity-cover {
+  position: relative;
+  display: grid;
+  min-height: 130px;
+  place-items: center;
+  background:
+    radial-gradient(
+      ellipse at 75% 15%,
+      rgba(245, 189, 85, 0.16),
+      transparent 42%
+    ),
+    linear-gradient(135deg, #414338, #252820 65%, #191c18);
 }
 
+.instructor-activity-cover-placeholder {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  color: #e9b654;
+  background: rgba(20, 22, 19, 0.55);
+  border: 1px solid rgba(245, 189, 85, 0.3);
+  border-radius: 15px;
+}
+
+.instructor-activity-status {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  max-width: calc(100% - 26px);
+  padding: 6px 11px;
+  color: #d7d7cf;
+  background: #393b34;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.instructor-activity-status--active {
+  color: #163c26;
+  background: #9ce3b4;
+}
+
+.instructor-activity-status--completed {
+  color: #30312d;
+  background: #e1e1dc;
+}
+
+.instructor-activity-status--inactive,
+.instructor-activity-status--cancelled {
+  color: #ffd0cb;
+  background: #482d2b;
+  border-color: #74423d;
+}
+
+/* Contenido principal */
 .instructor-activity-content {
   display: flex;
   flex: 1;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   min-width: 0;
   width: 100%;
+  padding: 20px;
+}
+
+.instructor-activity-category {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 13px;
+  color: #e9b654;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  line-height: 1.4;
+}
+
+.instructor-activity-icon {
+  display: grid;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: #24251f;
+  background: linear-gradient(145deg, #ffd16a, #dc9b43);
+  border-radius: 50%;
 }
 
 .instructor-activity-content h3 {
-  font-size: 1.3rem;
-  line-height: 1.35;
+  margin: 0 0 8px;
+  color: #fff8e9;
+  font-size: 1.25rem;
+  line-height: 1.3;
   overflow-wrap: anywhere;
-  margin-bottom: 12px;
 }
 
-.instructor-activity-content > p {
-  margin-bottom: 12px;
-  line-height: 1.55;
+.instructor-activity-description {
+  min-height: 0;
+  margin: 0 0 17px;
+  color: #bfc0b6;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
-.instructor-activity-content > p:last-of-type {
-  margin-bottom: 8px;
+/* Datos de la actividad */
+
+.instructor-activity-meta {
+  display: grid;
+  gap: 11px;
+  margin: 0 0 15px;
+  padding-top: 4px;
+}
+
+.instructor-activity-meta p {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+  margin: 0;
+  color: #c9c9bf;
+  font-size: 0.83rem;
+  line-height: 1.45;
+}
+
+.instructor-activity-meta svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #d9ad50;
+}
+
+.instructor-activity-meta span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.instructor-enrollment-state {
+  display: inline-flex;
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 6px 9px;
+  border: 1px solid #55574b;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.instructor-enrollment-state--open {
+  color: #a7e4b0;
+  background: rgba(66, 123, 75, 0.15);
+  border-color: #426b47;
+}
+
+.instructor-enrollment-state--pending {
+  color: #ffd18a;
+  background: rgba(245, 189, 85, 0.06);
+  border-color: #806533;
+}
+
+.instructor-enrollment-state--expired {
+  color: #ffaaa5;
+  background: rgba(160, 65, 58, 0.12);
+  border-color: #77413d;
+}
+
+.instructor-enrollment-state--unknown {
+  color: #d1d1c8;
+}
+
+/* Desplegable de encuentros */
+
+.instructor-activity-meetings-toggle {
+  margin-top: 17px;
+  border-top: 1px solid rgba(218, 208, 174, 0.15);
+}
+
+.instructor-meetings-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 0;
+  color: #e9b654;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.instructor-meetings-toggle:hover {
+  color: #ffdc8d;
+}
+
+.instructor-meetings-toggle:focus-visible {
+  outline: 2px solid #ffd16a;
+  outline-offset: 3px;
+  border-radius: 5px;
 }
 
 .instructor-meetings-list {
+  display: grid;
+  gap: 12px;
   width: 100%;
-  margin: 12px 0 8px;
+  margin: 0 0 5px;
+}
+
+.instructor-meetings-empty {
+  margin: 0;
+  padding: 13px;
+  color: #c3c4ba;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(218, 208, 174, 0.13);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  line-height: 1.5;
 }
 
 .instructor-meeting-item {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 12px;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 18px 0 4px;
-  margin-top: 14px;
-  border-top: 1px solid #484a42;
+  min-width: 0;
+  padding: 14px;
+  background: rgba(245, 189, 85, 0.035);
+  border: 1px solid rgba(218, 208, 174, 0.14);
+  border-radius: 11px;
 }
 
-.instructor-meeting-item p {
+.instructor-meeting-summary {
+  display: grid;
+  gap: 10px;
+}
+
+.instructor-meeting-summary p {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
   margin: 0;
-  line-height: 1.5;
+  color: #c9c9bf;
+  font-size: 0.83rem;
+  line-height: 1.45;
+}
+
+.instructor-meeting-summary p > svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: #d9ad50;
+}
+
+.instructor-meeting-summary p > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 
-.instructor-meeting-location {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
+.instructor-meeting-summary strong {
+  color: #f5f2e9;
+  font-size: 0.78rem;
 }
 
-.instructor-meeting-location svg {
-  flex-shrink: 0;
-  margin-top: 3px;
-}
-
-.instructor-meeting-item span {
-  display: inline-block;
-  color: #f5bd55;
-  font-weight: 700;
-  font-size: 0.9rem;
-  margin-top: 2px;
-}
-
-.instructor-activity-content > button.instructor-logout {
-  margin: 18px 0 0;
+.instructor-meeting-status {
+  display: inline-flex;
   align-self: flex-start;
+  max-width: 100%;
+  padding: 5px 9px;
+  color: #ffd18a;
+  background: rgba(245, 189, 85, 0.06);
+  border: 1px solid rgba(245, 189, 85, 0.3);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
-@media (max-width: 640px) {
-  .instructor-activity-card {
-    gap: 14px;
-    padding: 18px;
-    border-radius: 16px;
-  }
+.instructor-meeting-status--active,
+.instructor-meeting-status--open {
+  color: #a7e4b0;
+  border-color: #426b47;
+  background: rgba(66, 123, 75, 0.13);
+}
 
-  .instructor-activity-content h3 {
-    font-size: 1.15rem;
-  }
+.instructor-meeting-status--closed,
+.instructor-meeting-status--completed {
+  color: #d1d1c8;
+  border-color: #55574b;
+}
 
-  .instructor-activity-content > button.instructor-logout {
-    width: 100%;
-    margin-top: 16px;
-    padding: 13px 18px;
-  }
+.instructor-meeting-status--cancelled {
+  color: #ffaaa5;
+  border-color: #77413d;
+}
+
+/* Asistencia */
+
+.instructor-attendance-loading {
+  margin: 0;
+  color: #c3c4ba;
+  font-size: 0.85rem;
 }
 
 .instructor-attendance-status {
   width: 100%;
   box-sizing: border-box;
-  padding: 16px;
-  margin-top: 4px;
-  border: 1px solid #484a42;
-  border-radius: 12px;
-  background: rgba(245, 189, 85, 0.06);
+  padding: 13px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(218, 208, 174, 0.14);
+  border-radius: 10px;
 }
 
 .instructor-attendance-heading {
@@ -128,18 +359,24 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin: 0 0 14px;
+  gap: 9px;
+  margin: 0 0 12px;
+}
+
+.instructor-attendance-heading > strong {
+  color: #f5f2e9;
 }
 
 .attendance-state {
   display: inline-flex;
   align-items: center;
-  padding: 5px 10px;
+  max-width: 100%;
+  padding: 5px 9px;
   border: 1px solid #484a42;
   border-radius: 999px;
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .attendance-state--open {
@@ -165,47 +402,63 @@
 
 .instructor-attendance-details {
   display: grid;
-  gap: 10px;
+  gap: 9px;
   margin: 0;
 }
 
 .instructor-attendance-details > div {
   display: grid;
-  grid-template-columns: minmax(90px, 0.7fr) minmax(0, 1.3fr);
-  gap: 10px;
+  grid-template-columns: minmax(75px, 0.7fr) minmax(0, 1.3fr);
+  gap: 9px;
 }
 
 .instructor-attendance-details dt {
-  color: #c7c7bd;
-  font-size: 0.9rem;
+  color: #bfc0b6;
+  font-size: 0.82rem;
 }
 
 .instructor-attendance-details dd {
+  min-width: 0;
   margin: 0;
+  color: #e6e5dc;
+  font-size: 0.83rem;
   overflow-wrap: anywhere;
 }
 
 .attendance-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 16px;
+  gap: 8px;
+  margin-top: 13px;
 }
 
 .attendance-button {
-  border: 1px solid #f5bd55;
-  border-radius: 9px;
-  padding: 10px 14px;
-  background: #f5bd55;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 39px;
+  padding: 9px 12px;
   color: #24241f;
+  background: linear-gradient(135deg, #f5cd72, #e4ae50);
+  border: 1px solid #e9b654;
+  border-radius: 8px;
   font: inherit;
+  font-size: 0.82rem;
   font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
   cursor: pointer;
+  transition: filter 160ms ease;
+}
+
+.attendance-button:hover:not(:disabled) {
+  filter: brightness(1.08);
 }
 
 .attendance-button--secondary {
   color: #f5bd55;
   background: transparent;
+  border-color: #96753b;
 }
 
 .attendance-button:disabled {
@@ -215,7 +468,9 @@
 
 .attendance-feedback,
 .attendance-help {
-  margin: 12px 0 0;
+  margin: 10px 0 0;
+  color: #c7c7bd;
+  font-size: 0.82rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
@@ -224,9 +479,61 @@
   color: #ffaaa5;
 }
 
+.attendance-button:focus-visible,
+.instructor-create-meeting:focus-visible {
+  outline: 2px solid #ffd16a;
+  outline-offset: 3px;
+}
+
+/* Acciones */
+
+.instructor-view-attendance {
+  width: 100%;
+}
+
+.instructor-create-meeting {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  min-height: 42px;
+  margin-top: 10px;
+  padding: 10px 19px;
+  color: #24241f;
+  background: linear-gradient(135deg, #f5cd72, #dc9b43);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition:
+    filter 160ms ease,
+    transform 160ms ease;
+}
+
+.instructor-create-meeting:hover {
+  filter: brightness(1.07);
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+
 @media (max-width: 640px) {
-  .instructor-attendance-status {
+  .instructor-activity-cover {
+    min-height: 115px;
+  }
+
+  .instructor-activity-content {
+    padding: 16px;
+  }
+
+  .instructor-meeting-item {
     padding: 12px;
+  }
+
+  .instructor-attendance-status {
+    padding: 11px;
   }
 
   .instructor-attendance-details > div {
@@ -238,7 +545,144 @@
     flex-direction: column;
   }
 
-  .attendance-button {
+  .attendance-button,
+  .instructor-create-meeting {
     width: 100%;
   }
+
+  .instructor-create-meeting {
+    align-self: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .instructor-activity-card,
+  .attendance-button,
+  .instructor-create-meeting {
+    transition: none;
+  }
+}
+
+/* Tarjetas del instructor */
+
+.instructor-page .instructor-activity-card {
+  height: 100%;
+  min-height: 0;
+  align-self: stretch;
+}
+
+.instructor-page .instructor-activity-card .dashboard-activity-meta {
+  margin-bottom: 12px;
+}
+
+.instructor-page
+  .instructor-activity-card
+  .instructor-activity-meetings-toggle {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.instructor-page .instructor-activity-card .dashboard-activity-actions {
+  display: flex;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.instructor-page
+  .instructor-activity-card
+  .dashboard-activity-actions
+  .dashboard-button {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  font-size: 13px;
+  white-space: normal;
+}
+
+/* Encuentros: presentación compartida */
+.instructor-meeting-item.shared-meeting-card {
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.instructor-meeting-summary-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  color: #f5f2e9;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 11px;
+  cursor: pointer;
+}
+
+.instructor-meeting-summary-button > svg {
+  flex-shrink: 0;
+  color: #f5bd55;
+}
+
+.instructor-meeting-summary {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.instructor-meeting-summary > span:first-child {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+}
+
+.instructor-meeting-summary > span:first-child > svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: #f5bd55;
+}
+
+.instructor-meeting-summary > span:first-child > span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: #c9c9bf;
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.instructor-meeting-summary > span:first-child strong {
+  color: #f5f2e9;
+  font-size: 14px;
+}
+
+.instructor-meeting-details {
+  display: grid;
+  gap: 12px;
+  margin: 0 14px 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(218, 208, 174, 0.14);
+}
+
+.instructor-view-attendance {
+  width: 100%;
+}
+
+.instructor-meeting-summary-button:focus-visible {
+  outline: 2px solid #ffd16a;
+  outline-offset: -3px;
 }

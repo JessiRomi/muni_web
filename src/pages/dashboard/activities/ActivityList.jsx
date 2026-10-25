@@ -6,8 +6,11 @@ import {
   Trash2,
   CheckCircle2,
   RotateCcw,
+  RefreshCw,
+  ArrowRight,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getActivityVisual } from "../../../utils/activityVisuals";
 
 function formatDate(value) {
   if (!value) return "Sin fecha";
@@ -87,22 +90,32 @@ export default function ActivityList({
   const [now, setNow] = useState(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setNow(Date.now());
-    }, 0);
-
+    const timer = setTimeout(() => setNow(Date.now()), 0);
     return () => clearTimeout(timer);
   }, []);
 
   if (loading) {
-    return <p>Cargando actividades...</p>;
+    return (
+      <div className="dashboard-list-message" role="status">
+        <RefreshCw className="dashboard-icon-spinning" size={19} />
+        <span>Cargando actividades...</span>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div role="alert">
+      <div
+        className="dashboard-list-message dashboard-list-message--error"
+        role="alert"
+      >
         <p>{error}</p>
-        <button className="dashboard-logout" type="button" onClick={onRetry}>
+        <button
+          className="dashboard-button dashboard-button--secondary"
+          type="button"
+          onClick={onRetry}
+        >
+          <RefreshCw size={16} />
           Reintentar
         </button>
       </div>
@@ -110,7 +123,13 @@ export default function ActivityList({
   }
 
   if (activities.length === 0) {
-    return <p>Todavía no hay actividades registradas.</p>;
+    return (
+      <div className="dashboard-list-message dashboard-list-message--empty">
+        <CalendarDays size={28} />
+        <h3>Todavía no hay actividades</h3>
+        <p>Cuando se registren actividades, aparecerán en esta sección.</p>
+      </div>
+    );
   }
 
   const hasPendingAction =
@@ -119,6 +138,8 @@ export default function ActivityList({
   return (
     <div className="dashboard-activities-list">
       {activities.map((activity) => {
+        const visual = getActivityVisual(activity);
+
         const enrollmentState =
           now === null
             ? {
@@ -128,7 +149,6 @@ export default function ActivityList({
             : getEnrollmentState(activity, now);
 
         const isFinished = activity.status === "FINISHED";
-
         const isProcessing =
           deletingId === activity.id ||
           finishingId === activity.id ||
@@ -136,69 +156,87 @@ export default function ActivityList({
 
         return (
           <article className="dashboard-activity" key={activity.id}>
-            <CalendarDays size={22} aria-hidden="true" />
+            <div className="dashboard-activity-cover">
+              <img
+                src={visual.image}
+                alt=""
+                loading="lazy"
+                onError={(event) => {
+                  event.currentTarget.style.visibility = "hidden";
+                }}
+              />
 
-            <div>
+              <span
+                className={`dashboard-activity-status ${
+                  isFinished ? "is-finished" : "is-active"
+                }`}
+              >
+                {isFinished ? "Finalizada" : "Activa"}
+              </span>
+            </div>
+
+            <div className="dashboard-activity-content">
+              <span className="dashboard-activity-category">
+                <span className="dashboard-activity-category-icon">
+                  <CalendarDays size={15} aria-hidden="true" />
+                </span>
+                {visual.label}
+              </span>
+
               <h3>{activity.name || "Actividad sin nombre"}</h3>
 
-              <p>{activity.description || "Sin descripción disponible."}</p>
+              <p className="dashboard-activity-description">
+                {activity.description || "Sin descripción disponible."}
+              </p>
 
               {activity.capacity != null && (
                 <p className="dashboard-activity-detail">
-                  <Users size={15} aria-hidden="true" />
-                  Capacidad: {activity.capacity}
+                  <Users size={16} aria-hidden="true" />
+                  <span>Capacidad: {activity.capacity}</span>
                 </p>
               )}
 
               <p className="dashboard-activity-detail">
-                <Clock3 size={15} aria-hidden="true" />
-                Inicio de inscripción: {formatDate(activity.enrollmentStart)}
+                <Clock3 size={16} aria-hidden="true" />
+                <span>Inicio: {formatDate(activity.enrollmentStart)}</span>
               </p>
 
               <p className="dashboard-activity-detail">
-                <Clock3 size={15} aria-hidden="true" />
-                Fin de inscripción: {formatDate(activity.enrollmentEnd)}
+                <CalendarDays size={16} aria-hidden="true" />
+                <span>Fin: {formatDate(activity.enrollmentEnd)}</span>
               </p>
 
-              <span
-                className={`activity-enrollment-status ${enrollmentState.className}`}
-              >
-                {enrollmentState.label}
-              </span>
-
-              <span
-                className={`activity-enrollment-status ${
-                  isFinished
-                    ? "activity-enrollment-status--expired"
-                    : "activity-enrollment-status--open"
-                }`}
-              >
-                {isFinished ? "Actividad finalizada" : "Actividad activa"}
-              </span>
+              <div className="dashboard-activity-statuses">
+                <span
+                  className={`activity-enrollment-status ${enrollmentState.className}`}
+                >
+                  {enrollmentState.label}
+                </span>
+              </div>
 
               {isAdmin && (
                 <div className="dashboard-activity-actions">
                   {!isFinished && (
                     <>
                       <button
-                        className="dashboard-logout"
+                        className="dashboard-button dashboard-button--secondary"
                         type="button"
                         onClick={() => onEdit?.(activity)}
                         disabled={hasPendingAction}
                         aria-label={`Editar ${activity.name}`}
                       >
-                        <Pencil size={16} />
+                        <Pencil size={15} />
                         Editar
                       </button>
 
                       <button
-                        className="dashboard-logout"
+                        className="dashboard-button dashboard-button--success"
                         type="button"
                         onClick={() => onFinish?.(activity)}
                         disabled={hasPendingAction}
                         aria-label={`Finalizar ${activity.name}`}
                       >
-                        <CheckCircle2 size={16} />
+                        <CheckCircle2 size={15} />
                         {finishingId === activity.id
                           ? "Finalizando..."
                           : "Finalizar"}
@@ -208,13 +246,13 @@ export default function ActivityList({
 
                   {isFinished && (
                     <button
-                      className="dashboard-logout"
+                      className="dashboard-button dashboard-button--success"
                       type="button"
                       onClick={() => onReactivate?.(activity)}
                       disabled={hasPendingAction}
                       aria-label={`Reactivar ${activity.name}`}
                     >
-                      <RotateCcw size={16} />
+                      <RotateCcw size={15} />
                       {reactivatingId === activity.id
                         ? "Reactivando..."
                         : "Reactivar"}
@@ -222,17 +260,27 @@ export default function ActivityList({
                   )}
 
                   <button
-                    className="dashboard-logout"
+                    className="dashboard-button dashboard-button--danger"
                     type="button"
                     onClick={() => onDelete?.(activity)}
                     disabled={hasPendingAction || isProcessing}
                     aria-label={`Eliminar ${activity.name}`}
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={15} />
                     {deletingId === activity.id ? "Eliminando..." : "Eliminar"}
                   </button>
                 </div>
               )}
+
+              <button
+                className="dashboard-activity-more"
+                type="button"
+                onClick={() => isAdmin && onEdit?.(activity)}
+                aria-label={`Ver actividad: ${activity.name}`}
+                disabled={!isAdmin}
+              >
+                <ArrowRight size={20} aria-hidden="true" />
+              </button>
             </div>
           </article>
         );

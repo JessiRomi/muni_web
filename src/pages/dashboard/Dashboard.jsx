@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { LogOut, Landmark, RefreshCw, Plus } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { RefreshCw, Plus, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import activitiesService from "../../services/activitiesService";
@@ -7,11 +7,17 @@ import ActivityForm from "./activities/ActivityForm";
 import ActivityList from "./activities/ActivityList";
 import SiteFooter from "../../components/layout/SiteFooter";
 import AdminProfile from "./AdminProfile";
+import DashboardModal from "../../components/layout/DashboardModal";
+import MunicipalHeader from "../../components/layout/MunicipalHeader";
+import "../../styles/dashboard-section-heading.css";
+import "../../styles/activity-cards.css";
 import "./Dashboard.css";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const newActivityButtonRef = useRef(null);
+  const modalCloseButtonRef = useRef(null);
 
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +50,36 @@ export default function Dashboard() {
   useEffect(() => {
     loadActivities();
   }, [loadActivities]);
+
+  useEffect(() => {
+    if (!showForm) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        handleCancelForm();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    requestAnimationFrame(() => {
+      modalCloseButtonRef.current?.focus();
+    });
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showForm]);
+
+  useEffect(() => {
+    if (!showForm) {
+      newActivityButtonRef.current?.focus({ preventScroll: true });
+    }
+  }, [showForm]);
 
   function handleLogout() {
     logout();
@@ -123,6 +159,7 @@ export default function Dashboard() {
       setFinishingId(null);
     }
   }
+
   async function handleReactivateActivity(activity) {
     const confirmed = window.confirm(
       `¿Querés reactivar la actividad "${activity.name}"? Se conservarán sus encuentros, inscripciones y materiales.`,
@@ -138,12 +175,6 @@ export default function Dashboard() {
       await loadActivities();
     } catch (err) {
       console.error("Error completo al reactivar:", err);
-      console.error("Mensaje:", err.message);
-      console.error("Respuesta HTTP:", err.response?.status);
-      console.error("Datos de respuesta:", err.response?.data);
-      console.error("URL solicitada:", err.config?.url);
-      console.error("Método HTTP:", err.config?.method);
-
       const message = err.response?.data?.message;
 
       setActionError(
@@ -151,88 +182,71 @@ export default function Dashboard() {
           err.message ||
           "No se pudo reactivar la actividad. Intentá nuevamente.",
       );
+    } finally {
+      setReactivatingId(null);
     }
   }
+
   return (
     <>
       <main className="dashboard">
-        <header className="dashboard-header">
-          <div className="dashboard-brand">
-            <Landmark size={28} />
-            <div>
-              <strong>MUNI CIPOLLETTI</strong>
-              <span>Plataforma de actividades</span>
-            </div>
+        <MunicipalHeader onLogout={handleLogout} />
+        <section className="dashboard-content">
+          <div className="dashboard-welcome">
+            <span className="dashboard-eyebrow">
+              <Sparkles size={14} aria-hidden="true" />
+              PANEL DE ADMINISTRACIÓN
+            </span>
+            <h1>Gestioná tu comunidad.</h1>
+            <p>
+              Organizá actividades, acompañá a los equipos y mantené toda la
+              gestión municipal en un solo lugar.
+            </p>
           </div>
 
-          <button
-            className="dashboard-logout"
-            type="button"
-            onClick={handleLogout}
-          >
-            <LogOut size={18} />
-            Cerrar sesión
-          </button>
-        </header>
-
-        <section className="dashboard-content">
-          <span className="dashboard-eyebrow">PANEL PRINCIPAL</span>
-          <h1>¡Bienvenido!</h1>
           {isAdmin && <AdminProfile user={user} />}
-          <p>Ingresaste correctamente a la plataforma municipal.</p>
-
-          {user && (
-            <div className="dashboard-user">
-              <strong>{user.email}</strong>
-              <span>Rol: {(user.roles || []).join(", ")}</span>
-            </div>
-          )}
 
           <section className="dashboard-activities">
             <div className="dashboard-activities-heading">
               <div>
-                <span className="dashboard-eyebrow">GESTIÓN</span>
+                <span className="dashboard-eyebrow">GESTIÓN MUNICIPAL</span>
                 <h2>Actividades</h2>
+                <p>Administrá las propuestas y su estado.</p>
               </div>
 
-              <div className="dashboard-activity-actions">
+              <div className="dashboard-activities-header-actions">
                 {isAdmin && (
                   <button
-                    className="dashboard-primary-action"
+                    ref={newActivityButtonRef}
+                    className="dashboard-button dashboard-button--primary"
                     type="button"
                     onClick={handleNewActivity}
                   >
-                    <Plus size={18} />
+                    <Plus size={18} aria-hidden="true" />
                     Nueva actividad
                   </button>
                 )}
 
                 <button
-                  className="dashboard-logout"
+                  className="dashboard-button dashboard-button--secondary"
                   type="button"
                   onClick={loadActivities}
                   disabled={loading}
                 >
-                  <RefreshCw size={17} />
+                  <RefreshCw
+                    size={17}
+                    aria-hidden="true"
+                    className={loading ? "dashboard-icon-spinning" : ""}
+                  />
                   Actualizar
                 </button>
               </div>
             </div>
 
             {actionError && (
-              <p role="alert" className="activity-form-error">
+              <p role="alert" className="dashboard-action-error">
                 {actionError}
               </p>
-            )}
-
-            {showForm && isAdmin && (
-              <ActivityForm
-                key={editingActivity?.id ?? "new-activity"}
-                activity={editingActivity}
-                onCreated={handleActivitySaved}
-                onUpdated={handleActivitySaved}
-                onCancel={handleCancelForm}
-              />
             )}
 
             <ActivityList
@@ -252,6 +266,31 @@ export default function Dashboard() {
           </section>
         </section>
       </main>
+
+      {showForm && isAdmin && (
+        <DashboardModal
+          eyebrow="GESTIÓN MUNICIPAL"
+          title={editingActivity ? "Editar actividad" : "Nueva actividad"}
+          description={
+            editingActivity
+              ? "Actualizá la información de esta propuesta."
+              : "Completá los datos para sumar una propuesta municipal."
+          }
+          onClose={handleCancelForm}
+          closeButtonRef={modalCloseButtonRef}
+          labelledBy="activity-modal-title"
+        >
+          <ActivityForm
+            key={editingActivity?.id ?? "new-activity"}
+            activity={editingActivity}
+            onCreated={handleActivitySaved}
+            onUpdated={handleActivitySaved}
+            onCancel={handleCancelForm}
+            modal
+          />
+        </DashboardModal>
+      )}
+
       <SiteFooter />
     </>
   );

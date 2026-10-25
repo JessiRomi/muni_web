@@ -1,53 +1,156 @@
-.instructor-success {
-  color: #f5bd55;
-  margin-top: 20px;
-  line-height: 1.5;
+/* Panel identidad visual y distribución */
+.instructor-page {
+  min-height: 100vh;
+  overflow-x: clip;
+  color: #f5f2e9;
+  background:
+    radial-gradient(
+      ellipse at 85% 0%,
+      rgba(202, 125, 43, 0.16),
+      transparent 36%
+    ),
+    radial-gradient(
+      ellipse at 5% 35%,
+      rgba(91, 113, 73, 0.12),
+      transparent 35%
+    ),
+    linear-gradient(145deg, #171a17 0%, #20241f 48%, #171a17 100%);
 }
 
-/* Panel docente: distribución de actividades */
-.instructor-section > .instructor-eyebrow {
-  margin-bottom: 12px;
+.instructor-page,
+.instructor-page * {
+  box-sizing: border-box;
 }
 
-.instructor-section > h2 {
-  margin-bottom: 24px;
+.instructor-main {
+  width: min(1380px, calc(100% - 80px));
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 0 58px;
 }
 
-.instructor-section > button.instructor-logout {
-  margin-bottom: 28px;
+.instructor-main > .municipal-hero {
+  margin-bottom: 0;
 }
 
-.instructor-section > .instructor-card:not(.instructor-activity-card) {
-  max-width: 760px;
-  margin-bottom: 20px;
+
+/* Sección de actividades */
+.instructor-section {
+  min-width: 0;
+  margin-top: 16px;
 }
 
-/* Cuadrícula de actividades */
+.instructor-refresh {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 12px 24px;
+  color: #e6e5dc;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(226, 177, 86, 0.34);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.instructor-refresh:hover:not(:disabled) {
+  color: #ffd16a;
+  background: rgba(244, 181, 68, 0.08);
+  border-color: rgba(244, 181, 68, 0.75);
+}
+
+.instructor-refresh:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.instructor-refresh:focus-visible {
+  outline: 2px solid #ffd16a;
+  outline-offset: 3px;
+}
+
+
+/* Encabezado arriba y tarjetas debajo */
 .instructor-section:has(.instructor-activity-card) {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: stretch;
-  gap: 24px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  gap: 20px;
 }
 
-.instructor-section:has(.instructor-activity-card) > .instructor-eyebrow,
-.instructor-section:has(.instructor-activity-card) > h2,
-.instructor-section:has(.instructor-activity-card) > .instructor-success {
+.instructor-section:has(.instructor-activity-card)
+  > .dashboard-activities-heading,
+.instructor-section:has(.instructor-activity-card)
+  > .instructor-eyebrow,
+.instructor-section:has(.instructor-activity-card)
+  > .instructor-success,
+.instructor-section:has(.instructor-activity-card)
+  > p,
+.instructor-section:has(.instructor-activity-card)
+  > .instructor-card:not(.instructor-activity-card) {
   grid-column: 1 / -1;
 }
 
-.instructor-section:has(.instructor-activity-card) > button.instructor-logout {
-  grid-column: 1 / -1;
-  justify-self: start;
-  width: fit-content;
-  padding: 12px 20px;
-  font-size: 0.9rem;
-  margin-bottom: 0;
+.instructor-section:has(.instructor-activity-card)
+  > .instructor-activity-card {
+  grid-column: auto;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .instructor-section > .instructor-activity-card {
-  margin-bottom: 0;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
 }
+
+@media (max-width: 1100px) {
+  .instructor-section:has(.instructor-activity-card) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Estados y mensajes */
+
+.instructor-success {
+  margin-top: 20px;
+  color: #a6e9b8;
+  line-height: 1.5;
+}
+
+.instructor-icon-spinning {
+  animation: instructor-spin 1s linear infinite;
+}
+
+@keyframes instructor-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Adaptación a pantallas medianas */
+
+@media (max-width: 900px) {
+  .instructor-main {
+    width: calc(100% - 48px);
+    padding-bottom: 44px;
+  }
+}
+
+/* Adaptación a móviles */
 
 @media (max-width: 760px) {
   .instructor-section:has(.instructor-activity-card) {
@@ -55,7 +158,64 @@
     gap: 18px;
   }
 
-  .instructor-section > button.instructor-logout {
-    justify-self: start;
+  .instructor-refresh {
+    flex-shrink: 1;
+    align-self: flex-start;
+    white-space: normal;
   }
+}
+
+@media (max-width: 600px) {
+  .instructor-main {
+    width: calc(100% - 32px);
+    padding-bottom: 38px;
+  }
+}
+
+/* Respeta las preferencias de movimiento */
+
+@media (prefers-reduced-motion: reduce) {
+  .instructor-icon-spinning {
+    animation: none;
+  }
+}
+
+.instructor-section > .meeting-form {
+  grid-column: 1 / -1;
+}
+
+.instructor-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+  background: rgb(0 0 0 / 68%);
+  backdrop-filter: blur(6px);
+}
+
+.instructor-modal-overlay .instructor-meeting-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 900px);
+  max-height: calc(100vh - 48px);
+  margin: auto;
+  overflow-y: auto;
+  border: 1px solid rgba(220, 174, 82, 0.4);
+  border-radius: 20px;
+  background: #232520;
+  box-shadow: 0 24px 70px rgb(0 0 0 / 40%);
+}
+
+/* Ajuste exclusivo del encabezado del instructor */
+.instructor-section .dashboard-activities-heading h2 {
+  margin-bottom: 0;
+}
+
+.instructor-section .dashboard-activities-heading p {
+  margin-top: 0;
 }

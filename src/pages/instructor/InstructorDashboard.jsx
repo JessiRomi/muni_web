@@ -1,13 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
-import { LogOut, GraduationCap, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { activitiesService } from "../../services/activitiesService";
 import ActivityCard from "./ActivityCard";
 import MeetingForm from "./MeetingForm";
 import SiteFooter from "../../components/layout/SiteFooter";
 import "../role-pages.css";
-import ParticipantProfile from "../participant/components/ParticipantProfile";
+import SharedProfile from "../participant/components/SharedProfile";
 import useParticipantProfile from "../participant/hooks/useParticipantProfile";
+import MunicipalHeader from "../../components/layout/MunicipalHeader";
+import MunicipalHero from "../../components/layout/MunicipalHero";
+import DashboardModal from "../../components/layout/DashboardModal";
+import "../../styles/dashboard-section-heading.css";
+import "../../styles/activity-cards.css";
 import "./InstructorDashboard.css";
 
 export default function InstructorDashboard() {
@@ -72,31 +77,60 @@ export default function InstructorDashboard() {
 
   return (
     <div className="instructor-page">
+      <MunicipalHeader onLogout={logout} />
+
+      <MunicipalHero
+        variant="compact"
+        eyebrow="ESPACIO INSTRUCTOR"
+        title="Enseñá, compartí y conectá."
+        description="Consultá tus actividades, organizá encuentros y acompañá la participación de la comunidad."
+      />
+
       <main className="instructor-main">
-        <span className="instructor-eyebrow">ESPACIO DOCENTE</span>
-
-        <h1>¡Bienvenido!</h1>
-
-        <p className="instructor-description">
-          Consultá tus actividades y organizá los próximos encuentros.
-        </p>
-
-        <ParticipantProfile {...profileState} user={user} />
+        <SharedProfile {...profileState} user={user} currentRole="INSTRUCTOR" />
 
         <section className="instructor-section">
-          <span className="instructor-eyebrow">MI TRABAJO</span>
+          <div className="dashboard-activities-heading">
+            <div>
+              <span className="dashboard-eyebrow">MI TRABAJO</span>
+              <h2>Mis actividades</h2>
+              <p>Gestioná tus actividades y los próximos encuentros.</p>
+            </div>
 
-          <h2>Mis actividades asignadas</h2>
+            <div className="dashboard-activities-header-actions">
+              <button
+                className="dashboard-button dashboard-button--secondary"
+                type="button"
+                onClick={loadActivities}
+                disabled={loading}
+              >
+                <RefreshCw
+                  size={17}
+                  aria-hidden="true"
+                  className={loading ? "instructor-icon-spinning" : ""}
+                />
+                Actualizar actividades
+              </button>
+            </div>
+          </div>
 
-          <button
-            className="instructor-logout"
-            type="button"
-            onClick={loadActivities}
-            disabled={loading}
-          >
-            <RefreshCw size={18} />
-            Actualizar actividades
-          </button>
+          {selectedActivity && (
+            <DashboardModal
+              eyebrow="ESPACIO INSTRUCTOR"
+              title="Nuevo encuentro"
+              description={`Programá un encuentro para ${selectedActivity.name}.`}
+              onClose={handleCancelMeeting}
+              labelledBy="meeting-modal-title"
+              variant="instructor"
+            >
+              <MeetingForm
+                key={selectedActivity.id}
+                activity={selectedActivity}
+                onCreated={handleMeetingCreated}
+                onCancel={handleCancelMeeting}
+              />
+            </DashboardModal>
+          )}
 
           {loading && <p>Cargando actividades...</p>}
 
@@ -110,7 +144,7 @@ export default function InstructorDashboard() {
           )}
 
           {!loading && !error && activities.length === 0 && (
-            <div className="instructor-card">
+            <div className="instructor-card" role="status">
               <div>
                 <h3>No tenés actividades asignadas</h3>
                 <p>
@@ -137,22 +171,7 @@ export default function InstructorDashboard() {
             </p>
           )}
         </section>
-
-        {selectedActivity && (
-          <MeetingForm
-            key={selectedActivity.id}
-            activity={selectedActivity}
-            onCreated={handleMeetingCreated}
-            onCancel={handleCancelMeeting}
-          />
-        )}
-
-        <button className="instructor-logout" type="button" onClick={logout}>
-          <LogOut size={19} />
-          Cerrar sesión
-        </button>
       </main>
-
       <SiteFooter />
     </div>
   );
