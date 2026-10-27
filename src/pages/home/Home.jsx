@@ -22,6 +22,7 @@ import LoginModal from "../../components/auth/LoginModal";
 import { useAuth } from "../../context/AuthContext";
 import SiteFooter from "../../components/layout/SiteFooter";
 import activitiesService from "../../services/activitiesService";
+import WhatsAppButton from "../../components/contact/WhatsAppButton";
 import "./Home.css";
 
 const cardStyles = [
@@ -367,6 +368,7 @@ export default function Home({ darkMode, onToggleTheme }) {
         </section>
       </main>
       <SiteFooter homeHref="#inicio" />
+      <WhatsAppButton />
       <LoginModal
         isOpen={loginOpen}
         onClose={closeLogin}
