@@ -1,0 +1,110 @@
+
+.location-manager {
+  margin: 32px 0;
+  padding: 28px;
+  background: #282a26;
+  border: 1px solid #484a42;
+  border-radius: 20px;
+  color: #f4f1e9;
+}
+
+.location-manager-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.location-manager-heading h2 {
+  margin: 8px 0;
+}
+
+.location-manager-heading p {
+  color: #c4c3ba;
+}
+
+.location-manager-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px;
+  background: #1f211e;
+  border: 1px solid #484a42;
+  border-radius: 14px;
+}
+
+.location-manager-form h3,
+.location-manager-list h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.location-manager-form label {
+  font-weight: 600;
+}
+
+.location-manager-form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  color: #f4f1e9;
+  background: #282a26;
+  border: 1px solid #484a42;
+  border-radius: 9px;
+  font: inherit;
+}
+
+.location-manager-form input:focus-visible {
+  outline: 2px solid #f5bd55;
+  outline-offset: 2px;
+}
+
+.location-manager-form button {
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+.location-manager-list {
+  margin-top: 28px;
+}
+
+.location-manager-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  margin-top: 10px;
+  background: #1f211e;
+  border: 1px solid #484a42;
+  border-radius: 12px;
+}
+
+.location-manager-item p {
+  margin-bottom: 0;
+  color: #c4c3ba;
+  font-size: 0.9rem;
+}
+
+.location-manager-error {
+  color: #ff9b8f;
+}
+
+.location-manager-success {
+  color: #9bd6a5;
+}
+
+@media (max-width: 640px) {
+  .location-manager {
+    padding: 18px;
+  }
+
+  .location-manager-heading,
+  .location-manager-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

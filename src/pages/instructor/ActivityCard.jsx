@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useState } from "react";
 import {
   CalendarDays,
@@ -5,19 +6,17 @@ import {
   ChevronUp,
   Clock3,
   Users,
+  Pencil,
+  Trash2,
+  CheckCircle2,
+  RotateCcw,
+  ArrowRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import attendanceService from "../../services/attendanceService";
 import { getActivityVisual } from "../../utils/activityVisuals";
 import "../../styles/meeting-cards.css";
 import "./ActivityCard.css";
-
-const activityStatuses = {
-  ACTIVE: "Activa",
-  INACTIVE: "Inactiva",
-  CANCELLED: "Cancelada",
-  COMPLETED: "Finalizada",
-};
 
 const meetingStatuses = {
   SCHEDULED: "Programado",
@@ -26,6 +25,7 @@ const meetingStatuses = {
   CLOSED: "Cerrado",
   COMPLETED: "Finalizado",
   CANCELLED: "Cancelado",
+  SUSPENDED: "Suspendido",
 };
 
 function formatDate(value) {
@@ -45,7 +45,15 @@ function formatDate(value) {
   });
 }
 
+function isActivityFinished(status) {
+  return ["FINISHED", "COMPLETED"].includes(status);
+}
+
 function getEnrollmentState(activity, now = Date.now()) {
+  if (isActivityFinished(activity.status)) {
+    return { label: "Inscripciones cerradas", kind: "expired" };
+  }
+
   const start = new Date(activity.enrollmentStart).getTime();
   const end = new Date(activity.enrollmentEnd).getTime();
 
@@ -108,7 +116,6 @@ function AttendanceStatus({ meetingId }) {
 
       try {
         const result = await attendanceService.getSessionByMeeting(meetingId);
-
         setSession(result || null);
       } catch (err) {
         setError(
@@ -127,7 +134,7 @@ function AttendanceStatus({ meetingId }) {
     const refreshInterval = setInterval(() => {
       setNow(Date.now());
       loadSession({ showLoading: false });
-    }, 30_000);
+    }, 30000);
 
     return () => clearInterval(refreshInterval);
   }, [loadSession]);
@@ -173,7 +180,9 @@ function AttendanceStatus({ meetingId }) {
 
   if (loading) {
     return (
-      <p className="instructor-attendance-loading">Consultando asistencia...</p>
+      <p className="instructor-attendance-loading">
+        Consultando asistencia...
+      </p>
     );
   }
 
@@ -210,10 +219,7 @@ function AttendanceStatus({ meetingId }) {
       )}
 
       {error && (
-        <p
-          className="attendance-feedback attendance-feedback--error"
-          role="alert"
-        >
+        <p className="attendance-feedback attendance-feedback--error" role="alert">
           {error}
         </p>
       )}
@@ -262,15 +268,44 @@ function AttendanceStatus({ meetingId }) {
   );
 }
 
-export default function ActivityCard({ activity, onCreateMeeting }) {
+export default function ActivityCard({
+  activity,
+  role = "INSTRUCTOR",
+  onCreateMeeting,
+  onEditMeeting,
+  onEdit,
+  onDelete,
+  onFinish,
+  onReactivate,
+  deletingId = null,
+  finishingId = null,
+  reactivatingId = null,
+}) {
   const navigate = useNavigate();
   const [meetingsExpanded, setMeetingsExpanded] = useState(false);
   const [expandedMeetingId, setExpandedMeetingId] = useState(null);
 
+  const isAdmin = role === "ADMINISTRADOR";
+  const isFinished = isActivityFinished(activity.status);
+  const isProcessing =
+    deletingId === activity.id ||
+    finishingId === activity.id ||
+    reactivatingId === activity.id;
+
   const meetings = Array.isArray(activity.meetings) ? activity.meetings : [];
   const visual = getActivityVisual(activity);
   const enrollment = getEnrollmentState(activity);
-  const isFinished = activity.status === "COMPLETED";
+
+  function handleViewAttendance(meeting) {
+    navigate(`/encuentros/${meeting.id}/asistencia`, {
+      state: {
+        meeting,
+        activityId: activity.id,
+        activityName: activity.name,
+        enrollments: activity.enrollments || [],
+      },
+    });
+  }
 
   return (
     <article className="dashboard-activity instructor-activity-card">
@@ -324,15 +359,7 @@ export default function ActivityCard({ activity, onCreateMeeting }) {
 
         <div className="dashboard-activity-statuses">
           <span
-            className={`activity-enrollment-status ${
-              enrollment.kind === "open"
-                ? "activity-enrollment-status--open"
-                : enrollment.kind === "pending"
-                  ? "activity-enrollment-status--pending"
-                  : enrollment.kind === "expired"
-                    ? "activity-enrollment-status--expired"
-                    : "activity-enrollment-status--unknown"
-            }`}
+            className={`activity-enrollment-status activity-enrollment-status--${enrollment.kind}`}
           >
             {enrollment.label}
           </span>
@@ -364,87 +391,152 @@ export default function ActivityCard({ activity, onCreateMeeting }) {
                 Todavía no hay encuentros programados.
               </p>
             ) : (
-              meetings.map((meeting) => (
-                <div
-                  className="shared-meeting-card instructor-meeting-item"
-                  key={meeting.id}
-                >
-                  <button
-                    type="button"
-                    className="instructor-meeting-summary-button"
-                    aria-expanded={expandedMeetingId === meeting.id}
-                    onClick={() =>
-                      setExpandedMeetingId((current) =>
-                        current === meeting.id ? null : meeting.id,
-                      )
-                    }
+              [...meetings]
+                .sort(
+                  (a, b) =>
+                    new Date(a.dateTime).getTime() -
+                    new Date(b.dateTime).getTime(),
+                )
+                .map((meeting) => (
+                  <div
+                    className="shared-meeting-card instructor-meeting-item"
+                    key={meeting.id}
                   >
-                    <span className="instructor-meeting-summary">
-                      <span>
-                        <CalendarDays size={16} aria-hidden="true" />
+                    <button
+                      type="button"
+                      className="instructor-meeting-summary-button"
+                      aria-expanded={expandedMeetingId === meeting.id}
+                      onClick={() =>
+                        setExpandedMeetingId((current) =>
+                          current === meeting.id ? null : meeting.id,
+                        )
+                      }
+                    >
+                      <span className="instructor-meeting-summary">
                         <span>
-                          <strong>{formatDate(meeting.dateTime)}</strong>
-                          {meeting.location || "Sin ubicación"}
+                          <CalendarDays size={16} aria-hidden="true" />
+                          <span>
+                            <strong>{formatDate(meeting.dateTime)}</strong>
+                            {meeting.location || "Sin ubicación"}
+                          </span>
+                        </span>
+
+                        <span
+                          className={`instructor-meeting-status instructor-meeting-status--${String(
+                            meeting.status || "scheduled",
+                          ).toLowerCase()}`}
+                        >
+                          {meetingStatuses[meeting.status] ||
+                            meeting.status ||
+                            "Programado"}
                         </span>
                       </span>
 
-                      <span
-                        className={`instructor-meeting-status instructor-meeting-status--${String(
-                          meeting.status || "scheduled",
-                        ).toLowerCase()}`}
-                      >
-                        {meetingStatuses[meeting.status] ||
-                          meeting.status ||
-                          "Programado"}
-                      </span>
-                    </span>
+                      {expandedMeetingId === meeting.id ? (
+                        <ChevronUp size={19} aria-hidden="true" />
+                      ) : (
+                        <ChevronDown size={19} aria-hidden="true" />
+                      )}
+                    </button>
 
-                    {expandedMeetingId === meeting.id ? (
-                      <ChevronUp size={19} aria-hidden="true" />
-                    ) : (
-                      <ChevronDown size={19} aria-hidden="true" />
+                    {expandedMeetingId === meeting.id && (
+                      <div className="instructor-meeting-details">
+                        <AttendanceStatus meetingId={meeting.id} />
+
+                        <button
+                          className="dashboard-button dashboard-button--secondary instructor-view-attendance"
+                          type="button"
+                          onClick={() => handleViewAttendance(meeting)}
+                        >
+                          Ver asistencia
+                        </button>
+
+                        <button
+                          className="dashboard-button dashboard-button--secondary"
+                          type="button"
+                          onClick={() => onEditMeeting?.(activity, meeting)}
+                        >
+                          <Pencil size={16} />
+                          Editar encuentro
+                        </button>
+                      </div>
                     )}
-                  </button>
-
-                  {expandedMeetingId === meeting.id && (
-                    <div className="instructor-meeting-details">
-                      <AttendanceStatus meetingId={meeting.id} />
-
-                      <button
-                        className="dashboard-button dashboard-button--secondary instructor-view-attendance"
-                        type="button"
-                        onClick={() =>
-                          navigate(
-                            `/instructor/encuentros/${meeting.id}/asistencia`,
-                            {
-                              state: {
-                                meeting,
-                                activityId: activity.id,
-                                activityName: activity.name,
-                                enrollments: activity.enrollments || [],
-                              },
-                            },
-                          )
-                        }
-                      >
-                        Ver asistencia
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))
+                  </div>
+                ))
             )}
           </div>
         )}
 
         <div className="dashboard-activity-actions instructor-activity-actions">
-          <button
-            className="dashboard-button dashboard-button--secondary"
-            type="button"
-            onClick={() => onCreateMeeting(activity)}
-          >
-            Crear encuentro
-          </button>
+          {!isFinished && (
+            <button
+              className="dashboard-button dashboard-button--secondary"
+              type="button"
+              onClick={() => onCreateMeeting?.(activity)}
+            >
+              Crear encuentro
+            </button>
+          )}
+
+          {isAdmin && (
+            <>
+              {!isFinished && (
+                <>
+                  <button
+                    className="dashboard-button dashboard-button--secondary"
+                    type="button"
+                    onClick={() => onEdit?.(activity)}
+                    disabled={isProcessing}
+                  >
+                    <Pencil size={15} />
+                    Editar actividad
+                  </button>
+
+                  <button
+                    className="dashboard-button dashboard-button--success"
+                    type="button"
+                    onClick={() => onFinish?.(activity)}
+                    disabled={isProcessing}
+                  >
+                    <CheckCircle2 size={15} />
+                    {finishingId === activity.id ? "Finalizando..." : "Finalizar"}
+                  </button>
+                </>
+              )}
+
+              {isFinished && (
+                <button
+                  className="dashboard-button dashboard-button--success"
+                  type="button"
+                  onClick={() => onReactivate?.(activity)}
+                  disabled={isProcessing}
+                >
+                  <RotateCcw size={15} />
+                  {reactivatingId === activity.id ? "Reactivando..." : "Reactivar"}
+                </button>
+              )}
+
+              <button
+                className="dashboard-button dashboard-button--danger"
+                type="button"
+                onClick={() => onDelete?.(activity)}
+                disabled={isProcessing}
+              >
+                <Trash2 size={15} />
+                {deletingId === activity.id ? "Eliminando..." : "Eliminar"}
+              </button>
+
+              <button
+                className="dashboard-activity-more"
+                type="button"
+                onClick={() => onEdit?.(activity)}
+                aria-label={`Ver actividad: ${activity.name}`}
+                disabled={isProcessing}
+              >
+                <ArrowRight size={20} aria-hidden="true" />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </article>

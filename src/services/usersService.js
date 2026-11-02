@@ -15,6 +15,19 @@ const usersService = {
     const { data } = await api.patch("/users/me", profile);
     return data;
   },
+
+  async updateRoles(id, roles) {
+    const { data } = await api.patch(`/users/${id}/roles`, { roles });
+    return data;
+  },
+
+  async updateStatus(id, status) {
+    const { data } = await api.patch(`/users/${id}/status`, { status });
+    return data;
+  },
+
 };
+
+
 
 export default usersService;

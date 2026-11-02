@@ -309,6 +309,14 @@
   margin-top: 7px;
 }
 
+/* Separador entre encuentros */
+.dashboard-meeting-divider {
+  border: 0;
+  border-top: 1px solid rgba(244, 181, 68, 0.35);
+  margin: 14px 0;
+  width: 100%;
+}
+
 .dashboard-activity-statuses .activity-enrollment-status {
   margin: 0;
 }

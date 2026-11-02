@@ -26,6 +26,7 @@ export default function InstructorDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [selectedMeeting, setSelectedMeeting] = useState(null);
   const [success, setSuccess] = useState("");
 
   const loadActivities = useCallback(async () => {
@@ -61,18 +62,35 @@ export default function InstructorDashboard() {
   }, [loadActivities]);
 
   function handleMeetingCreated() {
+    const wasEditing = Boolean(selectedMeeting);
+
     setSelectedActivity(null);
-    setSuccess("El encuentro se creó correctamente.");
+    setSelectedMeeting(null);
+
+    setSuccess(
+      wasEditing
+        ? "El encuentro se actualizó correctamente."
+        : "El encuentro se creó correctamente.",
+    );
+
     loadActivities();
   }
 
   function handleCreateMeeting(activity) {
     setSelectedActivity(activity);
+    setSelectedMeeting(null);
+    setSuccess("");
+  }
+
+  function handleEditMeeting(activity, meeting) {
+    setSelectedActivity(activity);
+    setSelectedMeeting(meeting);
     setSuccess("");
   }
 
   function handleCancelMeeting() {
     setSelectedActivity(null);
+    setSelectedMeeting(null);
   }
 
   return (
@@ -117,15 +135,20 @@ export default function InstructorDashboard() {
           {selectedActivity && (
             <DashboardModal
               eyebrow="ESPACIO INSTRUCTOR"
-              title="Nuevo encuentro"
-              description={`Programá un encuentro para ${selectedActivity.name}.`}
+              title={selectedMeeting ? "Editar encuentro" : "Nuevo encuentro"}
+              description={
+                selectedMeeting
+                  ? `Modificá el encuentro de ${selectedActivity.name}.`
+                  : `Programá un encuentro para ${selectedActivity.name}.`
+              }
               onClose={handleCancelMeeting}
               labelledBy="meeting-modal-title"
               variant="instructor"
             >
               <MeetingForm
-                key={selectedActivity.id}
+                key={`${selectedActivity.id}-${selectedMeeting?.id ?? "new"}`}
                 activity={selectedActivity}
+                meeting={selectedMeeting}
                 onCreated={handleMeetingCreated}
                 onCancel={handleCancelMeeting}
               />
@@ -162,6 +185,7 @@ export default function InstructorDashboard() {
                 key={activity.id}
                 activity={activity}
                 onCreateMeeting={handleCreateMeeting}
+                onEditMeeting={handleEditMeeting}
               />
             ))}
 

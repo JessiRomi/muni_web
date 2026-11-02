@@ -61,6 +61,16 @@ const attendanceService = {
 
     return data;
   },
+
+  async updateManualAttendance(sessionId, participantId, status) {
+    const { data } = await api.patch("/attendance/manual", {
+      sessionId: Number(sessionId),
+      participantId: Number(participantId),
+      status,
+    });
+    return data;
+  },
+
 };
 
 export default attendanceService;

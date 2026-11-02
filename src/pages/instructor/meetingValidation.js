@@ -1,6 +1,6 @@
 function validateMeeting(meeting) {
-  if (!meeting.dateTime || !meeting.location.trim()) {
-    return "Completá la fecha, la hora y la ubicación.";
+  if (!meeting.dateTime) {
+    return "Completá la fecha y hora.";
   }
 
   const dateTime = new Date(meeting.dateTime);
@@ -9,27 +9,14 @@ function validateMeeting(meeting) {
     return "Ingresá una fecha y hora válidas.";
   }
 
-  if (meeting.latitude.trim() === "" || meeting.longitude.trim() === "") {
-    return "Completá la latitud y la longitud.";
+  if (dateTime <= new Date()) {
+    return "La fecha y hora del encuentro deben ser futuras.";
   }
 
-  const latitude = Number(meeting.latitude);
-  const longitude = Number(meeting.longitude);
-  const allowedRadius = Number(meeting.allowedRadius);
+  const locationId = Number(meeting.locationId);
 
-  if (
-    !Number.isFinite(latitude) ||
-    latitude < -90 ||
-    latitude > 90 ||
-    !Number.isFinite(longitude) ||
-    longitude < -180 ||
-    longitude > 180
-  ) {
-    return "Ingresá coordenadas válidas.";
-  }
-
-  if (!Number.isFinite(allowedRadius) || allowedRadius <= 0) {
-    return "El radio permitido debe ser mayor que cero.";
+  if (!Number.isInteger(locationId) || locationId <= 0) {
+    return "Seleccioná una ubicación.";
   }
 
   return "";

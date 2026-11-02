@@ -1,0 +1,223 @@
+
+.user-management {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  color: var(--dashboard-text);
+}
+
+.user-management-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.user-management-eyebrow {
+  color: var(--dashboard-amber);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.user-management-heading h3 {
+  margin: 8px 0;
+  color: #fff7e7;
+  font-size: 22px;
+}
+
+.user-management-heading p {
+  margin: 0;
+  color: var(--dashboard-muted);
+  font-size: 13px;
+}
+
+.user-management-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.user-management-card {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(200px, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--dashboard-border);
+  border-radius: 9px;
+}
+
+.user-management-info {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+}
+
+.user-management-avatar {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  flex-shrink: 0;
+  color: var(--dashboard-amber);
+  background: rgba(244, 181, 68, 0.1);
+  border: 1px solid var(--dashboard-border);
+  border-radius: 50%;
+}
+
+.user-management-info h4 {
+  margin: 0 0 5px;
+  color: #fff7e7;
+  font-size: 14px;
+}
+
+.user-management-info p {
+  margin: 0 0 8px;
+  color: var(--dashboard-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.user-management-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.user-management-status--active {
+  color: #a6e9b8;
+  background: rgba(38, 112, 65, 0.2);
+}
+
+.user-management-status--inactive {
+  color: #ffaaaa;
+  background: rgba(133, 39, 39, 0.2);
+}
+
+.user-management-roles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+
+.user-management-roles > span {
+  width: 100%;
+  color: var(--dashboard-amber);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.user-management-roles label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #e6e5dc;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.user-management-roles input {
+  accent-color: var(--dashboard-amber);
+  cursor: pointer;
+}
+
+.user-management-roles input:disabled {
+  cursor: not-allowed;
+}
+
+.user-management-roles button {
+  min-height: 35px;
+  padding: 8px 11px;
+  font-size: 11px;
+}
+
+.user-management-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.user-management-actions button {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.user-management-empty {
+  padding: 35px 20px;
+  color: var(--dashboard-muted);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--dashboard-border);
+  border-radius: 8px;
+}
+
+.user-management-message {
+  margin: 0;
+  padding: 12px 15px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.user-management-message--error {
+  color: #ffaaaa;
+  background: rgba(133, 39, 39, 0.18);
+  border: 1px solid rgba(224, 95, 95, 0.35);
+}
+
+.user-management-message--success {
+  color: #a6e9b8;
+  background: rgba(38, 112, 65, 0.2);
+  border: 1px solid rgba(94, 188, 120, 0.35);
+}
+
+@media (max-width: 850px) {
+  .user-management-card {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .user-management-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 500px) {
+  .user-management-card {
+    padding: 15px;
+  }
+
+  .user-management-heading {
+    align-items: flex-start;
+  }
+
+  .user-management-roles {
+    gap: 12px;
+  }
+}
+
+.user-management-roles > span {
+  color: var(--dashboard-amber);
+}
+
+.user-management-roles label {
+  color: #e6e5dc;
+}
+
+.user-management-info h4 {
+  color: #fff7e7;
+}
+
+.user-management-info p {
+  color: #b8b9ad;
+}
+
+.user-management-card {
+  background: rgba(255, 255, 255, 0.035);
+}

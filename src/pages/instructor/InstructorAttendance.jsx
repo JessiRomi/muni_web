@@ -10,6 +10,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import attendanceService from "../../services/attendanceService";
 import activitiesService from "../../services/activitiesService";
 import "./InstructorAttendance.css";
+import { useAuth } from "../../context/AuthContext";
 
 function formatDate(value) {
   if (!value) return "Sin fecha";
@@ -75,8 +76,14 @@ export default function InstructorAttendance() {
   const [attendanceError, setAttendanceError] = useState("");
   const [processingAbsences, setProcessingAbsences] = useState(false);
   const [absenceNotice, setAbsenceNotice] = useState("");
+  const [savingParticipantId, setSavingParticipantId] = useState(null); 
   const hasLoadedRef = useRef(false);
   const sessionIdRef = useRef(null);
+  const { user } = useAuth();
+
+  const isAdmin = user?.roles?.includes("ADMINISTRADOR");
+
+  const backPath = isAdmin ? "/panel" : "/instructor";
 
   const loadSession = useCallback(async () => {
     const isInitialLoad = !hasLoadedRef.current;
@@ -91,12 +98,12 @@ export default function InstructorAttendance() {
 
     try {
       const enrollmentsData = activityId
-        ? await activitiesService.getActiveEnrollments(activityId)
-        : [];
+      ? await activitiesService.getAllEnrollmentsByActivity(activityId)
+      : [];
 
-      const currentEnrollments = Array.isArray(enrollmentsData)
-        ? enrollmentsData.filter((enrollment) => enrollment.status === "ACTIVE")
-        : [];
+    const currentEnrollments = Array.isArray(enrollmentsData)
+      ? enrollmentsData
+      : [];
 
       setActiveEnrollments(currentEnrollments);
 
@@ -205,6 +212,33 @@ export default function InstructorAttendance() {
     }
   }, [session, processingAbsences, loading, attendanceLoading, loadSession]);
 
+  const handleManualAttendance = async (participantId, status) => {
+    if (!session?.id || savingParticipantId !== null) return;
+
+    setSavingParticipantId(participantId);
+    setAttendanceError("");
+    setAbsenceNotice("");
+
+    try {
+      await attendanceService.updateManualAttendance(
+        session.id,
+        participantId,
+        status,
+      );
+
+      await loadSession();
+      setAbsenceNotice("La asistencia se actualizó correctamente.");
+    } catch (err) {
+      setAttendanceError(
+        err.response?.data?.message ||
+          err.message ||
+          "No se pudo modificar la asistencia.",
+      );
+    } finally {
+      setSavingParticipantId(null);
+    }
+  };
+
   useEffect(() => {
     loadSession();
   }, [loadSession]);
@@ -224,14 +258,16 @@ export default function InstructorAttendance() {
       <button
         className="instructor-attendance-back"
         type="button"
-        onClick={() => navigate("/instructor")}
+        onClick={() => navigate(backPath)}
       >
         <ArrowLeft size={18} />
-        Volver a mis actividades
+        {isAdmin ? "Volver al panel" : "Volver a mis actividades"}
       </button>
 
       <header className="instructor-attendance-header">
-        <span className="instructor-eyebrow">ESPACIO DOCENTE</span>
+        <span className="instructor-eyebrow">
+          {isAdmin ? "ADMINISTRACIÓN" : "ESPACIO DOCENTE"}
+        </span>
         <h1>Asistencia del encuentro</h1>
         <p>Consultá el estado de la sesión y los registros de asistencia.</p>
       </header>
@@ -335,6 +371,7 @@ export default function InstructorAttendance() {
                     <th>Inscripción</th>
                     <th>Asistencia</th>
                     <th>Hora de registro</th>
+                    <th>Modificar asistencia</th>
                   </tr>
                 </thead>
 
@@ -353,7 +390,15 @@ export default function InstructorAttendance() {
                             ? `${enrollment.participant.firstName} ${enrollment.participant.lastName}`
                             : `Participante #${enrollment.participantId}`}
                         </td>
-                        <td>Activa</td>
+                        <td>
+                          {enrollment.status === "ACTIVE"
+                            ? "Activa"
+                            : enrollment.status === "DROPPED"
+                              ? "Baja"
+                              : enrollment.status === "WITHDRAWN"
+                                ? "Retirada"
+                                : enrollment.status}
+                        </td>
                         <td>
                           {loading || attendanceLoading
                             ? record
@@ -365,6 +410,35 @@ export default function InstructorAttendance() {
                           {record?.checkInTime
                             ? formatDate(record.checkInTime)
                             : "—"}
+                        </td>
+                        <td>
+                          <select
+                            value={record?.status || ""}
+                            onChange={(e) =>
+                              handleManualAttendance(
+                                enrollment.participantId,
+                                e.target.value,
+                              )
+                            }
+
+                            disabled={
+                              !session ||
+                              loading ||
+                              attendanceLoading ||
+                              savingParticipantId !== null ||
+                              (enrollment.status !== "ACTIVE" &&
+                                !(enrollment.status === "DROPPED" &&
+                                  record?.status === "ABSENT"))
+                            }
+                          >
+                            <option value="">Pendiente</option>
+                            <option value="PRESENT">Presente</option>
+                            <option value="ABSENT">Ausente</option>
+                          </select>
+
+                          {savingParticipantId === enrollment.participantId && (
+                            <span> Guardando...</span>
+                          )}
                         </td>
                       </tr>
                     );

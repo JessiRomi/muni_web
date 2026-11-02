@@ -12,6 +12,11 @@ import MunicipalHeader from "../../components/layout/MunicipalHeader";
 import "../../styles/dashboard-section-heading.css";
 import "../../styles/activity-cards.css";
 import "./Dashboard.css";
+import MeetingForm from "../instructor/MeetingForm";
+import { MapPin } from "lucide-react";
+import LocationManager from "./locations/LocationManager";
+import { Users } from "lucide-react";
+import UserManagement from "./users/UserManagement";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -29,6 +34,12 @@ export default function Dashboard() {
   const [finishingId, setFinishingId] = useState(null);
   const [reactivatingId, setReactivatingId] = useState(null);
   const isAdmin = user?.roles?.includes("ADMINISTRADOR");
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [meetingError, setMeetingError] = useState("");
+  const [showLocationManager, setShowLocationManager] = useState(false);
+  const [selectedMeeting, setSelectedMeeting] = useState(null);
+  const [showUserManagement, setShowUserManagement] = useState(false);
+  
 
   const loadActivities = useCallback(async () => {
     setLoading(true);
@@ -187,6 +198,34 @@ export default function Dashboard() {
     }
   }
 
+  function handleCreateMeeting(activity) {
+    setSelectedActivity(activity);
+    setSelectedMeeting(null);
+    setMeetingError("");
+  }
+
+  function handleEditMeeting(activity, meeting) {
+    setSelectedActivity(activity);
+    setSelectedMeeting(meeting);
+    setMeetingError("");
+  }
+
+  function handleCancelMeeting() {
+    setSelectedActivity(null);
+    setSelectedMeeting(null);
+    setMeetingError("");
+  }
+
+  async function handleMeetingCreated() {
+    //const wasEditing = Boolean(selectedMeeting);
+
+    setSelectedActivity(null);
+    setSelectedMeeting(null);
+    setMeetingError("");
+
+    await loadActivities();
+  }
+
   return (
     <>
       <main className="dashboard">
@@ -227,6 +266,28 @@ export default function Dashboard() {
                   </button>
                 )}
 
+                {isAdmin && (
+                  <button
+                    className="dashboard-button dashboard-button--secondary"
+                    type="button"
+                    onClick={() => setShowLocationManager((current) => !current)}
+                  >
+                    <MapPin size={17} />
+                    {showLocationManager ? "Cerrar ubicaciones" : "Gestionar ubicaciones"}
+                  </button>
+                )}
+
+                {isAdmin && (
+                  <button
+                    className="dashboard-button dashboard-button--secondary"
+                    type="button"
+                    onClick={() => setShowUserManagement(true)}
+                  >
+                    <Users size={17} />
+                    Gestionar usuarios
+                  </button>
+                )}
+
                 <button
                   className="dashboard-button dashboard-button--secondary"
                   type="button"
@@ -261,6 +322,8 @@ export default function Dashboard() {
               onFinish={handleFinishActivity}
               onEdit={handleEditActivity}
               onDelete={handleDeleteActivity}
+              onCreateMeeting={handleCreateMeeting}
+              onEditMeeting={handleEditMeeting}
               onRetry={loadActivities}
             />
           </section>
@@ -288,6 +351,54 @@ export default function Dashboard() {
             onCancel={handleCancelForm}
             modal
           />
+
+
+        </DashboardModal>
+      )}
+
+      {selectedActivity && isAdmin && (
+        <DashboardModal
+          eyebrow="GESTIÓN MUNICIPAL"
+          title={selectedMeeting ? "Editar encuentro" : "Nuevo encuentro"}
+          description={
+            selectedMeeting
+              ? `Modificá los datos del encuentro de ${selectedActivity.name}.`
+              : `Creá un encuentro para la actividad ${selectedActivity.name}.`
+          }
+          onClose={handleCancelMeeting}
+          labelledBy="meeting-modal-title"
+        >
+          <MeetingForm
+            key={`${selectedActivity.id}-${selectedMeeting?.id ?? "new"}`}
+            activity={selectedActivity}
+            meeting={selectedMeeting}
+            onCreated={handleMeetingCreated}
+            onCancel={handleCancelMeeting}
+          />
+        </DashboardModal>
+      )}
+
+      {showLocationManager && isAdmin && (
+        <DashboardModal
+          eyebrow="GESTIÓN MUNICIPAL"
+          title="Gestionar ubicaciones"
+          description="Registrá y administrá los lugares donde se realizan los encuentros."
+          onClose={() => setShowLocationManager(false)}
+          labelledBy="location-modal-title"
+        >
+          <LocationManager />
+        </DashboardModal>
+      )}
+
+      {showUserManagement && isAdmin && (
+        <DashboardModal
+          eyebrow="GESTIÓN MUNICIPAL"
+          title="Gestionar usuarios"
+          description="Administrá los roles y el estado de las cuentas registradas."
+          onClose={() => setShowUserManagement(false)}
+          labelledBy="users-modal-title"
+        >
+          <UserManagement />
         </DashboardModal>
       )}
 

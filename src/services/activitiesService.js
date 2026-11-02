@@ -70,6 +70,13 @@ export const activitiesService = {
     );
     return data;
   },
+
+  async getAllEnrollmentsByActivity(activityId) {
+    const { data } = await api.get(
+      `/activities/${Number(activityId)}/enrollments`,
+    );
+    return data;
+  },
 };
 
 export default activitiesService;
